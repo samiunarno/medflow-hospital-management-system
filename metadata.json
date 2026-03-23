@@ -1,0 +1,5 @@
+{
+  "name": "MedFlow Hospital Management System",
+  "description": "A comprehensive hospital management system with role-based access control, patient management, pharmacy, and analytics.",
+  "requestFramePermissions": []
+}
