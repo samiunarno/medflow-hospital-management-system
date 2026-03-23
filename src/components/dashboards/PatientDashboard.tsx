@@ -34,7 +34,7 @@ export default function PatientDashboard({ user }: any) {
               <Activity className="w-3 h-3" />
               Health Summary • Good
             </div>
-            <h2 className="text-3xl sm:text-4xl lg:text-6xl font-display font-bold mb-6 tracking-tight leading-tight break-words">
+            <h2 className="text-2xl sm:text-4xl lg:text-6xl font-display font-bold mb-6 tracking-tight leading-tight break-words">
               Hello, <br />
               <span className="text-indigo-400">{user?.username}</span>
             </h2>

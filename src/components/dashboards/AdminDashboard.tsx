@@ -50,7 +50,7 @@ export default function AdminDashboard({ stats, trends, pendingUsers, onApprove 
             <Cpu className="w-3 h-3" />
             System Core v4.2.0
           </div>
-          <h1 className="text-4xl sm:text-6xl lg:text-8xl font-display font-black text-white mb-4 tracking-tighter uppercase leading-none break-words">
+          <h1 className="text-3xl sm:text-6xl lg:text-8xl font-display font-black text-white mb-4 tracking-tighter uppercase leading-none break-words">
             Mission <br />
             <span className="text-transparent stroke-text">Control</span>
           </h1>

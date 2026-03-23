@@ -42,7 +42,7 @@ export default function Login() {
       <div className="fixed inset-0 noise z-50 pointer-events-none opacity-20" />
 
       {/* Left Side - Form */}
-      <div className="w-full lg:w-1/2 p-12 lg:p-24 flex flex-col justify-between relative z-10">
+      <div className="w-full lg:w-1/2 p-6 sm:p-12 lg:p-24 flex flex-col justify-between relative z-10">
         <Link to="/" className="flex items-center gap-3 group mb-20">
           <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center text-black group-hover:rotate-12 transition-transform duration-500 shadow-2xl shadow-white/10">
             <Activity className="w-6 h-6" />
@@ -60,7 +60,7 @@ export default function Login() {
               <Lock className="w-3 h-3 text-blue-500" />
               Secure Authentication
             </div>
-            <h1 className="text-5xl sm:text-6xl lg:text-8xl font-display font-black uppercase tracking-tighter mb-4 leading-none break-words">
+            <h1 className="text-4xl sm:text-6xl lg:text-8xl font-display font-black uppercase tracking-tighter mb-4 leading-none break-words">
               System <br />
               <span className="text-blue-500">Access</span>
             </h1>

@@ -48,7 +48,7 @@ export default function Patients() {
     <div className="space-y-8">
       <header className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Patients</h1>
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900">Patients</h1>
           <p className="text-gray-500">Manage and view all patient records.</p>
         </div>
         {(user?.role === 'Admin' || user?.role === 'Staff') && (

@@ -54,7 +54,7 @@ export default function Landing() {
       </nav>
 
       {/* 1. Hero Section */}
-      <section className="pt-40 pb-24 px-6 overflow-hidden">
+      <section className="pt-32 sm:pt-40 pb-16 sm:pb-24 px-4 sm:px-6 overflow-hidden">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           <motion.div
             initial={{ opacity: 0, x: -50 }}
@@ -65,7 +65,7 @@ export default function Landing() {
               <ShieldCheck className="w-4 h-4" />
               Trusted by 500+ Medical Institutions
             </div>
-            <h1 className="text-6xl lg:text-7xl font-bold leading-[1.1] tracking-tight text-gray-900 mb-8">
+            <h1 className="text-4xl sm:text-6xl lg:text-7xl font-bold leading-[1.1] tracking-tight text-gray-900 mb-8">
               Modern Care for <span className="text-blue-600">Modern Hospitals.</span>
             </h1>
             <p className="text-xl text-gray-500 leading-relaxed mb-10 max-w-xl">
@@ -141,8 +141,8 @@ export default function Landing() {
       </section>
 
       {/* 2. Stats Section */}
-      <section className="py-24 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-6">
+      <section className="py-16 sm:py-24 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-12">
             <StatItem value="100k+" label="Patients Served" />
             <StatItem value="500+" label="Hospitals" />
@@ -153,11 +153,11 @@ export default function Landing() {
       </section>
 
       {/* 3. Services Section */}
-      <section id="services" className="py-24 px-6">
+      <section id="services" className="py-16 sm:py-24 px-4 sm:px-6">
         <div className="max-w-7xl mx-auto">
           <div className="text-center max-w-3xl mx-auto mb-20">
             <h2 className="text-sm font-bold text-blue-600 uppercase tracking-widest mb-4">Our Services</h2>
-            <h3 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">Everything you need to run a modern hospital.</h3>
+            <h3 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-6">Everything you need to run a modern hospital.</h3>
             <p className="text-lg text-gray-500">Streamline every aspect of your medical facility with our comprehensive suite of digital tools.</p>
           </div>
 
@@ -203,12 +203,12 @@ export default function Landing() {
       </section>
 
       {/* 4. Specialties Section */}
-      <section id="specialties" className="py-24 bg-gray-900 text-white overflow-hidden">
-        <div className="max-w-7xl mx-auto px-6">
+      <section id="specialties" className="py-16 sm:py-24 bg-gray-900 text-white overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="flex flex-col lg:flex-row items-end justify-between mb-20 gap-8">
             <div className="max-w-2xl">
               <h2 className="text-sm font-bold text-blue-400 uppercase tracking-widest mb-4">Specialties</h2>
-              <h3 className="text-4xl lg:text-5xl font-bold mb-6">Tailored solutions for every department.</h3>
+              <h3 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6">Tailored solutions for every department.</h3>
             </div>
             <button className="px-8 py-4 bg-white text-gray-900 rounded-2xl font-bold hover:bg-blue-50 transition-all flex items-center gap-2">
               View All Departments
@@ -226,7 +226,7 @@ export default function Landing() {
       </section>
 
       {/* 5. Features Section */}
-      <section id="features" className="py-24 px-6">
+      <section id="features" className="py-16 sm:py-24 px-4 sm:px-6">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
           <div className="order-2 lg:order-1">
             <img 
@@ -238,7 +238,7 @@ export default function Landing() {
           </div>
           <div className="order-1 lg:order-2">
             <h2 className="text-sm font-bold text-blue-600 uppercase tracking-widest mb-4">Why MedFlow</h2>
-            <h3 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-8">Designed for efficiency, built for care.</h3>
+            <h3 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-8">Designed for efficiency, built for care.</h3>
             
             <div className="space-y-8">
               <FeatureItem 
@@ -269,11 +269,11 @@ export default function Landing() {
       </section>
 
       {/* 6. Testimonials Section */}
-      <section id="testimonials" className="py-24 bg-gray-50 px-6">
+      <section id="testimonials" className="py-16 sm:py-24 bg-gray-50 px-4 sm:px-6">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-20">
             <h2 className="text-sm font-bold text-blue-600 uppercase tracking-widest mb-4">Testimonials</h2>
-            <h3 className="text-4xl font-bold text-gray-900">What medical leaders say.</h3>
+            <h3 className="text-3xl sm:text-4xl font-bold text-gray-900">What medical leaders say.</h3>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -300,11 +300,11 @@ export default function Landing() {
       </section>
 
       {/* 7. FAQ Section */}
-      <section className="py-24 px-6">
+      <section className="py-16 sm:py-24 px-4 sm:px-6">
         <div className="max-w-3xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-sm font-bold text-blue-600 uppercase tracking-widest mb-4">FAQ</h2>
-            <h3 className="text-4xl font-bold text-gray-900">Common Questions</h3>
+            <h3 className="text-3xl sm:text-4xl font-bold text-gray-900">Common Questions</h3>
           </div>
 
           <div className="space-y-4">
@@ -329,7 +329,7 @@ export default function Landing() {
       </section>
 
       {/* 8. Contact & Footer */}
-      <footer className="bg-gray-900 text-white pt-24 pb-12 px-6">
+      <footer className="bg-gray-900 text-white pt-16 sm:pt-24 pb-12 px-4 sm:px-6">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-16 mb-20">
             <div className="lg:col-span-2">

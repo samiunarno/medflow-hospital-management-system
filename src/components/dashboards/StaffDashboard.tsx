@@ -32,7 +32,7 @@ export default function StaffDashboard({ user, stats }: any) {
               <ShieldCheck className="w-3 h-3" />
               System Status • Operational
             </div>
-            <h2 className="text-4xl lg:text-6xl font-display font-bold mb-6 tracking-tight leading-tight break-words">
+            <h2 className="text-2xl sm:text-4xl lg:text-6xl font-display font-bold mb-6 tracking-tight leading-tight break-words">
               Welcome back, <br />
               <span className="text-emerald-400">{user?.username}</span>
             </h2>
@@ -179,9 +179,9 @@ function ActivityItem({ icon: Icon, title, desc, time, color }: any) {
   };
 
   return (
-    <div className="p-8 flex items-center justify-between hover:bg-gray-50/50 transition-all group cursor-pointer border-l-4 border-l-transparent hover:border-l-emerald-600">
-      <div className="flex items-center gap-8">
-        <div className={`p-4 rounded-2xl ${colors[color]} border group-hover:scale-110 transition-transform duration-300`}>
+    <div className="p-6 lg:p-8 flex flex-col sm:flex-row sm:items-center justify-between hover:bg-gray-50/50 transition-all group cursor-pointer border-l-4 border-l-transparent hover:border-l-emerald-600 gap-6">
+      <div className="flex flex-col sm:flex-row sm:items-center gap-6 lg:gap-8">
+        <div className={`p-4 rounded-2xl ${colors[color]} border group-hover:scale-110 transition-transform duration-300 w-fit`}>
           <Icon className="w-6 h-6" />
         </div>
         <div className="min-w-0">
@@ -189,8 +189,8 @@ function ActivityItem({ icon: Icon, title, desc, time, color }: any) {
           <p className="text-xs text-gray-400 font-bold uppercase tracking-tight truncate">{desc}</p>
         </div>
       </div>
-      <div className="text-right flex items-center gap-6">
-        <div className="hidden sm:block">
+      <div className="text-right flex items-center justify-between sm:justify-end gap-6">
+        <div className="sm:block">
           <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{time}</p>
         </div>
         <div className="w-10 h-10 flex items-center justify-center bg-gray-50 rounded-xl text-gray-300 group-hover:bg-emerald-600 group-hover:text-white group-hover:translate-x-1 transition-all">

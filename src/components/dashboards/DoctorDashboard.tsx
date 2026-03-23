@@ -32,7 +32,7 @@ export default function DoctorDashboard({ user }: any) {
               <Activity className="w-3 h-3" />
               On Duty • General Medicine
             </div>
-            <h2 className="text-3xl sm:text-4xl lg:text-6xl font-display font-bold mb-6 tracking-tight leading-tight break-words">
+            <h2 className="text-2xl sm:text-4xl lg:text-6xl font-display font-bold mb-6 tracking-tight leading-tight break-words">
               Welcome back, <br />
               <span className="text-blue-500">Dr. {user?.username}</span>
             </h2>

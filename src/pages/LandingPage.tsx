@@ -67,7 +67,7 @@ export default function LandingPage() {
       <div className="fixed inset-0 noise z-50 pointer-events-none opacity-20" />
 
       {/* Navigation */}
-      <nav className="fixed top-0 w-full z-[60] px-6 py-8 flex justify-between items-center mix-blend-difference">
+      <nav className="fixed top-0 w-full z-[60] px-4 sm:px-6 py-6 sm:py-8 flex justify-between items-center mix-blend-difference">
         <Link to="/" className="flex items-center gap-2 group">
           <div className="w-8 h-8 lg:w-10 lg:h-10 bg-white rounded-full flex items-center justify-center text-black group-hover:rotate-12 transition-transform duration-500">
             <Activity className="w-4 h-4 lg:w-6 lg:h-6" />
@@ -89,19 +89,19 @@ export default function LandingPage() {
       </nav>
 
       {/* Hero Section - Editorial Style */}
-      <section className="relative h-screen flex flex-col items-center justify-center overflow-hidden px-6 pt-20">
+      <section className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden px-4 sm:px-6 pt-24 sm:pt-32 lg:pt-20">
         <motion.div style={{ y: heroY, opacity: heroOpacity }} className="text-center relative z-10 w-full max-w-[1400px]">
           <motion.div
             variants={containerVariants}
             initial="hidden"
             animate="visible"
           >
-            <motion.div variants={itemVariants} className="inline-flex items-center gap-3 px-4 py-2 bg-white/5 border border-white/10 rounded-full text-[10px] font-bold uppercase tracking-widest mb-12 backdrop-blur-xl">
+            <motion.div variants={itemVariants} className="inline-flex items-center gap-3 px-4 py-2 bg-white/5 border border-white/10 rounded-full text-[8px] sm:text-[10px] font-bold uppercase tracking-widest mb-8 lg:mb-12 backdrop-blur-xl">
               <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" />
               System Status: Operational
             </motion.div>
             
-            <motion.h1 variants={itemVariants} className="text-[12vw] sm:text-[10vw] lg:text-[14vw] font-display font-black leading-[0.85] tracking-tighter uppercase mb-12 break-words">
+            <motion.h1 variants={itemVariants} className="text-[12vw] sm:text-[12vw] lg:text-[14vw] font-display font-black leading-[0.85] tracking-tighter uppercase mb-8 lg:mb-12 break-words">
               The Core <br />
               <span className="text-transparent stroke-text">Protocol</span>
             </motion.h1>
@@ -188,14 +188,14 @@ export default function LandingPage() {
       </section>
 
       {/* Architecture Section - Technical & Structured */}
-      <section id="architecture" className="py-20 lg:py-32 px-6 max-w-[1400px] mx-auto">
+      <section id="architecture" className="py-12 sm:py-20 lg:py-32 px-4 sm:px-6 max-w-[1400px] mx-auto">
         <div className="flex flex-col lg:flex-row gap-16 lg:gap-24 items-start mb-20 lg:mb-32">
           <div className="lg:w-1/3">
             <div className="inline-flex items-center gap-2 px-3 py-1 bg-blue-500/10 border border-blue-500/20 rounded-full text-[8px] font-bold uppercase tracking-[0.3em] mb-8 text-blue-500">
               <Cpu className="w-3 h-3" />
               MedFlow Core
             </div>
-            <h2 className="text-4xl lg:text-5xl font-display font-bold uppercase tracking-tighter mb-8 leading-none">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold uppercase tracking-tighter mb-8 leading-none">
               The Architecture <br className="hidden lg:block" />of Trust
             </h2>
             <p className="text-gray-500 text-sm leading-relaxed uppercase tracking-wider">
@@ -222,7 +222,7 @@ export default function LandingPage() {
         <div id="solutions" className="grid grid-cols-1 md:grid-cols-12 gap-6">
           <motion.div 
             whileHover={{ scale: 0.99 }}
-            className="md:col-span-8 bg-white/2 border border-white/10 rounded-[2rem] lg:rounded-[3rem] p-8 lg:p-20 relative overflow-hidden group"
+            className="md:col-span-8 bg-white/2 border border-white/10 rounded-[2rem] lg:rounded-[3rem] p-6 sm:p-8 lg:p-20 relative overflow-hidden group"
           >
             <div className="relative z-10 h-full flex flex-col justify-between">
               <div>
@@ -233,7 +233,7 @@ export default function LandingPage() {
                   <div className="h-px flex-1 bg-white/10" />
                   <span className="text-[10px] font-mono text-gray-600">MODULE_01</span>
                 </div>
-                <h3 className="text-5xl lg:text-7xl font-display font-bold uppercase tracking-tighter mb-8 leading-none">
+                <h3 className="text-4xl sm:text-5xl lg:text-7xl font-display font-bold uppercase tracking-tighter mb-8 leading-none">
                   Unified <br />Patient View
                 </h3>
                 <p className="text-gray-500 text-lg max-w-md leading-relaxed uppercase tracking-wider">
@@ -256,7 +256,7 @@ export default function LandingPage() {
 
           <motion.div 
             whileHover={{ scale: 0.99 }}
-            className="md:col-span-4 bg-gray-900 border border-white/10 rounded-[2rem] lg:rounded-[3rem] p-8 lg:p-12 relative overflow-hidden group"
+            className="md:col-span-4 bg-gray-900 border border-white/10 rounded-[2rem] lg:rounded-[3rem] p-6 sm:p-8 lg:p-12 relative overflow-hidden group"
           >
             <div className="relative z-10">
               <div className="w-12 h-12 bg-purple-600 rounded-xl flex items-center justify-center mb-8">
@@ -285,7 +285,7 @@ export default function LandingPage() {
 
           <motion.div 
             whileHover={{ scale: 0.99 }}
-            className="md:col-span-4 bg-blue-600 rounded-[2rem] lg:rounded-[3rem] p-8 lg:p-12 relative overflow-hidden group text-white"
+            className="md:col-span-4 bg-blue-600 rounded-[2rem] lg:rounded-[3rem] p-6 sm:p-8 lg:p-12 relative overflow-hidden group text-white"
           >
             <div className="relative z-10">
               <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center mb-8 backdrop-blur-md">
@@ -303,11 +303,11 @@ export default function LandingPage() {
 
           <motion.div 
             whileHover={{ scale: 0.99 }}
-            className="md:col-span-8 bg-white/2 border border-white/10 rounded-[2rem] lg:rounded-[3rem] p-8 lg:p-20 relative overflow-hidden group"
+            className="md:col-span-8 bg-white/2 border border-white/10 rounded-[2rem] lg:rounded-[3rem] p-6 sm:p-8 lg:p-20 relative overflow-hidden group"
           >
             <div className="flex flex-col md:flex-row gap-12 items-center">
               <div className="flex-1">
-                <h3 className="text-4xl lg:text-5xl font-display font-bold uppercase tracking-tighter mb-6">
+                <h3 className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold uppercase tracking-tighter mb-6">
                   Predictive <br />Care
                 </h3>
                 <p className="text-gray-500 text-sm leading-relaxed mb-8 uppercase tracking-wider">
@@ -344,11 +344,11 @@ export default function LandingPage() {
       </section>
 
       {/* Workflow Section - Professional Process */}
-      <section className="py-20 lg:py-32 bg-white text-black relative overflow-hidden">
-        <div className="max-w-[1400px] mx-auto px-6 relative z-10">
-          <div className="flex flex-col md:flex-row justify-between items-end mb-16 lg:mb-24">
+      <section className="py-12 sm:py-20 lg:py-32 bg-white text-black relative overflow-hidden">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 relative z-10">
+          <div className="flex flex-col md:flex-row justify-between items-center md:items-end mb-16 lg:mb-24 gap-8">
             <div className="max-w-xl text-center md:text-left">
-              <h2 className="text-5xl lg:text-7xl font-display font-black uppercase tracking-tighter leading-none mb-8">
+              <h2 className="text-4xl sm:text-6xl lg:text-7xl font-display font-black uppercase tracking-tighter leading-none mb-8">
                 Seamless <br />Integration
               </h2>
               <p className="text-gray-400 text-sm font-bold uppercase tracking-widest">
@@ -360,17 +360,17 @@ export default function LandingPage() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-1">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-1 bg-gray-100 border border-gray-100">
             {[
               { step: "01", title: "Infrastructure Audit", desc: "We map your existing data silos and hardware nodes." },
               { step: "02", title: "Core Deployment", desc: "MedFlow Core is initialized on your private cloud." },
               { step: "03", title: "Data Migration", desc: "Legacy records are sanitized and ingested into the mesh." },
               { step: "04", title: "Operational Live", desc: "Full system activation with zero-downtime transition." }
             ].map((item, i) => (
-              <div key={i} className="p-12 border border-gray-100 hover:bg-gray-50 transition-colors">
-                <span className="text-5xl font-display font-black text-blue-100 mb-8 block">{item.step}</span>
-                <h4 className="text-xl font-display font-bold uppercase tracking-tighter mb-4">{item.title}</h4>
-                <p className="text-gray-400 text-xs leading-relaxed uppercase tracking-widest">{item.desc}</p>
+              <div key={i} className="p-8 sm:p-10 lg:p-12 bg-white hover:bg-gray-50 transition-colors">
+                <span className="text-4xl sm:text-5xl font-display font-black text-blue-100 mb-6 sm:mb-8 block">{item.step}</span>
+                <h4 className="text-lg sm:text-xl font-display font-bold uppercase tracking-tighter mb-4">{item.title}</h4>
+                <p className="text-gray-400 text-[10px] sm:text-xs leading-relaxed uppercase tracking-widest">{item.desc}</p>
               </div>
             ))}
           </div>
@@ -378,10 +378,10 @@ export default function LandingPage() {
       </section>
 
       {/* Security Section - Trust & Compliance */}
-      <section id="security" className="py-32 px-6 bg-[#0a0a0a] border-y border-white/5">
+      <section id="security" className="py-16 sm:py-32 px-4 sm:px-6 bg-[#0a0a0a] border-y border-white/5">
         <div className="max-w-[1400px] mx-auto flex flex-col lg:flex-row gap-24 items-center">
           <div className="lg:w-1/2">
-            <h2 className="text-6xl font-display font-black uppercase tracking-tighter mb-8 leading-none">
+            <h2 className="text-4xl sm:text-6xl font-display font-black uppercase tracking-tighter mb-8 leading-none">
               Fortress <br />Security
             </h2>
             <p className="text-gray-500 text-lg mb-12 uppercase tracking-wider leading-relaxed">
@@ -416,7 +416,7 @@ export default function LandingPage() {
       </section>
 
       {/* CTA Section - Atmospheric */}
-      <section className="py-24 lg:py-48 px-6 relative overflow-hidden">
+      <section className="py-16 sm:py-24 lg:py-48 px-4 sm:px-6 relative overflow-hidden">
         <div className="max-w-4xl mx-auto text-center relative z-10">
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
@@ -455,7 +455,7 @@ export default function LandingPage() {
       </section>
 
       {/* Footer */}
-      <footer className="py-24 px-6 border-t border-white/5">
+      <footer className="py-12 sm:py-24 px-4 sm:px-6 border-t border-white/5">
         <div className="max-w-[1400px] mx-auto grid grid-cols-1 md:grid-cols-4 gap-24">
           <div className="md:col-span-2">
             <div className="flex items-center gap-2 mb-8">

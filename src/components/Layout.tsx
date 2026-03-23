@@ -182,7 +182,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
       {/* Main Content */}
       <main className="flex-1 flex flex-col min-w-0 overflow-hidden relative">
-        <header className="h-20 lg:h-28 bg-black/20 backdrop-blur-xl border-b border-white/5 flex items-center justify-between px-6 lg:px-12 flex-shrink-0 relative z-20">
+        <header className="h-20 lg:h-28 bg-black/20 backdrop-blur-xl border-b border-white/5 flex items-center justify-between px-4 sm:px-6 lg:px-12 flex-shrink-0 relative z-20">
           <div className="flex items-center gap-4 lg:gap-10">
             <button
               onClick={() => setIsSidebarOpen(!isSidebarOpen)}
@@ -228,7 +228,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           </div>
         </header>
 
-        <div className="flex-1 overflow-y-auto p-6 md:p-12 lg:p-20 custom-scrollbar relative">
+        <div className="flex-1 overflow-y-auto p-4 sm:p-6 md:p-12 lg:p-20 custom-scrollbar relative">
           <div className="max-w-[1400px] mx-auto relative z-10">
             {children}
           </div>
