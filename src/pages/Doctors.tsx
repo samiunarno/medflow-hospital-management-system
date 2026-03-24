@@ -106,7 +106,7 @@ export default function Doctors() {
                     <Hospital className="w-4 h-4" />
                     <span className="text-xs font-bold uppercase tracking-widest">Dept</span>
                   </div>
-                  <span className="text-sm font-bold text-white truncate">{doctor.department_name}</span>
+                  <span className="text-sm font-bold text-white truncate">{doctor.department_id?.name || 'N/A'}</span>
                 </div>
 
                 <div className="flex items-center justify-between p-3 bg-white/5 border border-white/5 rounded-2xl gap-2">

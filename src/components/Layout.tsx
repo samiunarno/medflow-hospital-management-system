@@ -29,6 +29,19 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const navigate = useNavigate();
   const location = useLocation();
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(window.innerWidth > 1024);
+  const [isNotificationsOpen, setIsNotificationsOpen] = React.useState(false);
+  const [searchQuery, setSearchQuery] = React.useState('');
+  const [notifications, setNotifications] = React.useState([
+    { id: 1, title: 'System Update', message: 'MedFlow v2.4 is now live with enhanced telemetry.', time: '2m ago', read: false },
+    { id: 2, title: 'New Patient', message: 'John Doe has been admitted to Ward 4B.', time: '15m ago', read: false },
+    { id: 3, title: 'Security Alert', message: 'New login detected from a different terminal.', time: '1h ago', read: true },
+  ]);
+
+  const unreadCount = notifications.filter(n => !n.read).length;
+
+  const markAllRead = () => {
+    setNotifications(notifications.map(n => ({ ...n, read: true })));
+  };
 
   React.useEffect(() => {
     const handleResize = () => {
@@ -194,26 +207,94 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               {isSidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
             
-            <div className="hidden md:flex items-center bg-white/5 px-6 py-3.5 rounded-2xl border border-white/5 focus-within:border-white/20 focus-within:bg-white/10 transition-all duration-500 w-[300px] lg:w-[400px]">
+            <form 
+              onSubmit={(e) => {
+                e.preventDefault();
+                if (searchQuery.trim()) {
+                  navigate(`/search?q=${encodeURIComponent(searchQuery)}`);
+                }
+              }}
+              className="hidden md:flex items-center bg-white/5 px-6 py-3.5 rounded-2xl border border-white/5 focus-within:border-white/20 focus-within:bg-white/10 transition-all duration-500 w-[300px] lg:w-[400px]"
+            >
               <Search className="w-4 h-4 text-gray-500 mr-4" />
               <input 
                 type="text" 
                 placeholder="EXECUTE SEARCH..." 
                 className="bg-transparent border-none focus:ring-0 text-[10px] font-bold tracking-[0.2em] w-full placeholder:text-gray-600 text-white"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
               />
               <div className="flex items-center gap-1 px-2 py-1 bg-white/5 rounded-lg border border-white/10 ml-2">
                 <Command className="w-3 h-3 text-gray-500" />
                 <span className="text-[8px] font-bold text-gray-500">K</span>
               </div>
-            </div>
+            </form>
           </div>
           
           <div className="flex items-center gap-6">
-            <div className="flex items-center gap-2">
-              <button className="w-12 h-12 flex items-center justify-center bg-white/5 hover:bg-white/10 rounded-2xl text-white relative transition-all duration-500 border border-white/5">
+            <div className="flex items-center gap-2 relative">
+              <button 
+                onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
+                className={`w-12 h-12 flex items-center justify-center rounded-2xl text-white relative transition-all duration-500 border border-white/5 ${isNotificationsOpen ? 'bg-white/10' : 'bg-white/5 hover:bg-white/10'}`}
+              >
                 <Bell className="w-5 h-5" />
-                <span className="absolute top-3 right-3 w-2 h-2 bg-blue-500 rounded-full shadow-[0_0_10px_rgba(59,130,246,0.8)]" />
+                {unreadCount > 0 && (
+                  <span className="absolute top-3 right-3 w-2 h-2 bg-blue-500 rounded-full shadow-[0_0_10px_rgba(59,130,246,0.8)]" />
+                )}
               </button>
+
+              <AnimatePresence>
+                {isNotificationsOpen && (
+                  <>
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      onClick={() => setIsNotificationsOpen(false)}
+                      className="fixed inset-0 z-40"
+                    />
+                    <motion.div
+                      initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                      className="absolute top-16 right-0 w-80 bg-black/80 backdrop-blur-2xl border border-white/10 rounded-3xl shadow-2xl z-50 overflow-hidden"
+                    >
+                      <div className="p-6 border-b border-white/5 flex items-center justify-between">
+                        <h3 className="text-sm font-bold uppercase tracking-widest text-white">Notifications</h3>
+                        <button 
+                          onClick={markAllRead}
+                          className="text-[10px] font-bold uppercase tracking-widest text-blue-500 hover:text-blue-400 transition-colors"
+                        >
+                          Mark all read
+                        </button>
+                      </div>
+                      <div className="max-h-96 overflow-y-auto custom-scrollbar">
+                        {notifications.map((n) => (
+                          <div 
+                            key={n.id} 
+                            className={`p-6 border-b border-white/5 hover:bg-white/5 transition-colors cursor-pointer relative ${!n.read ? 'bg-blue-500/5' : ''}`}
+                          >
+                            {!n.read && (
+                              <div className="absolute left-2 top-1/2 -translate-y-1/2 w-1 h-8 bg-blue-500 rounded-full" />
+                            )}
+                            <div className="flex justify-between items-start mb-1">
+                              <h4 className="text-xs font-bold text-white uppercase tracking-tight">{n.title}</h4>
+                              <span className="text-[8px] font-bold text-gray-600 uppercase">{n.time}</span>
+                            </div>
+                            <p className="text-[10px] text-gray-500 leading-relaxed">{n.message}</p>
+                          </div>
+                        ))}
+                      </div>
+                      <div className="p-4 text-center">
+                        <button className="text-[10px] font-bold uppercase tracking-widest text-gray-500 hover:text-white transition-colors">
+                          View all activity
+                        </button>
+                      </div>
+                    </motion.div>
+                  </>
+                )}
+              </AnimatePresence>
+
               <button className="w-12 h-12 flex items-center justify-center bg-white/5 hover:bg-white/10 rounded-2xl text-white transition-all duration-500 border border-white/5">
                 <Zap className="w-5 h-5" />
               </button>

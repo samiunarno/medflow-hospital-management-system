@@ -49,7 +49,7 @@ export default function Analytics() {
       const statsData = await statsRes.json();
       const trendsData = await trendsRes.json();
       setStats(statsData);
-      setTrends(trendsData.reverse());
+      setTrends(trendsData); // No need to reverse if it's already sorted by date from backend
     } catch (err) {
       console.error('Failed to fetch analytics data');
     } finally {
@@ -57,7 +57,12 @@ export default function Analytics() {
     }
   };
 
-  if (loading) return <div className="flex items-center justify-center h-64">Loading Analytics...</div>;
+  if (loading) return (
+    <div className="flex flex-col items-center justify-center h-96 gap-4">
+      <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
+      <p className="text-gray-500 font-bold uppercase tracking-widest text-xs">Synchronizing Analytics...</p>
+    </div>
+  );
 
   return (
     <div className="space-y-8">
@@ -80,10 +85,10 @@ export default function Analytics() {
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        <StatCard title="Total Patients" value={stats.patients.count} icon={Users} color="blue" trend="+12.5%" isUp={true} />
-        <StatCard title="Inpatients" value={stats.inpatients.count} icon={Bed} color="orange" trend="+4.2%" isUp={true} />
-        <StatCard title="Outpatients" value={stats.outpatients.count} icon={Calendar} color="green" trend="-2.1%" isUp={false} />
-        <StatCard title="Medicines" value={stats.medicines.count} icon={Pill} color="purple" trend="+8.4%" isUp={true} />
+        <StatCard title="Total Patients" value={stats?.patients?.count || 0} icon={Users} color="blue" trend="+12.5%" isUp={true} />
+        <StatCard title="Inpatients" value={stats?.inpatients?.count || 0} icon={Bed} color="orange" trend="+4.2%" isUp={true} />
+        <StatCard title="Outpatients" value={stats?.outpatients?.count || 0} icon={Calendar} color="green" trend="-2.1%" isUp={false} />
+        <StatCard title="Medicines" value={stats?.medicines?.count || 0} icon={Pill} color="purple" trend="+8.4%" isUp={true} />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -125,7 +130,7 @@ export default function Analytics() {
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
-                  data={stats.bedStatus}
+                  data={stats?.bedStatus || []}
                   cx="50%"
                   cy="50%"
                   innerRadius={80}
@@ -135,7 +140,7 @@ export default function Analytics() {
                   nameKey="status"
                   stroke="none"
                 >
-                  {stats.bedStatus.map((entry: any, index: number) => (
+                  {(stats?.bedStatus || []).map((entry: any, index: number) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
@@ -146,7 +151,7 @@ export default function Analytics() {
             </ResponsiveContainer>
           </div>
           <div className="grid grid-cols-3 gap-4 mt-4">
-            {stats.bedStatus.map((s: any, i: number) => (
+            {(stats?.bedStatus || []).map((s: any, i: number) => (
               <div key={s.status} className="text-center p-4 bg-white/5 rounded-2xl border border-white/5">
                 <div className="w-3 h-3 rounded-full mx-auto mb-2" style={{ backgroundColor: COLORS[i % COLORS.length] }} />
                 <p className="text-[10px] text-gray-600 font-bold uppercase tracking-widest">{s.status}</p>

@@ -114,10 +114,10 @@ export default function Wards() {
                 }`}>
                   <Bed className="w-6 h-6" />
                 </div>
-                <span className="text-[10px] font-bold text-gray-600">#{bed.id}</span>
+                <span className="text-[10px] font-bold text-gray-600">#{bed._id.slice(-4)}</span>
               </div>
 
-              <h3 className="font-bold text-white mb-1 truncate">{bed.ward_type} Ward</h3>
+              <h3 className="font-bold text-white mb-1 truncate">{bed.ward_id?.name || 'General'} Ward</h3>
               <p className={`text-[10px] font-bold uppercase tracking-widest mb-4 ${
                 bed.status === 'Available' ? 'text-green-400' :
                 bed.status === 'Occupied' ? 'text-blue-400' :
@@ -130,7 +130,7 @@ export default function Wards() {
                 <div className="pt-4 border-t border-blue-500/20">
                   <div className="flex items-center gap-2 text-blue-400 mb-2">
                     <User className="w-4 h-4" />
-                    <span className="text-xs font-bold truncate">{bed.patient_name}</span>
+                    <span className="text-xs font-bold truncate">{bed.patient_id?.name || 'Unknown Patient'}</span>
                   </div>
                   <button className="w-full py-2 bg-white/5 text-blue-400 rounded-xl text-xs font-bold hover:bg-blue-600 hover:text-white transition-all border border-blue-500/20">
                     View Patient

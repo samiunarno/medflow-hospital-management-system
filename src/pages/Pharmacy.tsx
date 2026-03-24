@@ -121,7 +121,7 @@ export default function Pharmacy() {
                     <span className="text-xs font-bold uppercase tracking-widest">Aliases</span>
                   </div>
                   <div className="flex flex-wrap gap-2">
-                    {JSON.parse(med.aliases || '[]').map((alias: string) => (
+                    {(med.aliases || []).map((alias: string) => (
                       <span key={alias} className="text-[10px] font-bold px-2 py-1 bg-white/5 text-gray-500 rounded-lg border border-white/5">
                         {alias}
                       </span>
