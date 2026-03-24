@@ -82,30 +82,13 @@ async function startServer() {
     }
   };
 
-  // Auto-remove users without ID after 24 hours
-  const autoRemoveUnverified = async () => {
-    const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
-    const result = await User.deleteMany({
-      role: { $ne: 'Admin' },
-      id_card_url: { $exists: false },
-      createdAt: { $lt: oneDayAgo }
-    });
-    if (result.deletedCount > 0) {
-      console.log(`Auto-removed ${result.deletedCount} unverified users.`);
-    }
-  };
-
   if (mongoose.connection.readyState === 1) {
     seedDepartments();
     seedAdmin();
-    autoRemoveUnverified();
-    setInterval(autoRemoveUnverified, 60 * 60 * 1000); // Run every hour
   } else {
     mongoose.connection.once('open', () => {
       seedDepartments();
       seedAdmin();
-      autoRemoveUnverified();
-      setInterval(autoRemoveUnverified, 60 * 60 * 1000);
     });
   }
 

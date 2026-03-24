@@ -123,7 +123,7 @@ export default function Settings() {
             <div className="p-8 border-b border-white/5 flex items-center justify-between">
               <div>
                 <h3 className="text-lg font-bold text-white uppercase tracking-tight">Identity Verification</h3>
-                <p className="text-xs text-gray-500 font-medium mt-1">Required for all users within 24 hours of registration.</p>
+                <p className="text-xs text-gray-500 font-medium mt-1">Required for all users to ensure system security.</p>
               </div>
               <Shield className="w-6 h-6 text-blue-400" />
             </div>
@@ -143,7 +143,7 @@ export default function Settings() {
                     <p className="text-xs font-bold uppercase tracking-widest">Action Required</p>
                   </div>
                   <p className="text-sm text-gray-400 leading-relaxed">
-                    Please upload a clear photo of your Passport or National ID card. Failure to do so within 24 hours will result in automatic account removal.
+                    Please upload a clear photo of your Passport or National ID card. This is required for administrative verification.
                   </p>
                   <label className="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-white/10 rounded-3xl hover:border-blue-500/40 hover:bg-blue-500/5 transition-all cursor-pointer group">
                     {isUploading ? (
