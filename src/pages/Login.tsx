@@ -66,14 +66,6 @@ export default function Login() {
             </h1>
             <p className="text-gray-500 font-bold text-sm uppercase tracking-widest mb-12">Authorized personnel only.</p>
             
-            <div className="mb-8 p-4 bg-blue-500/5 border border-blue-500/10 rounded-2xl">
-              <p className="text-[8px] font-bold text-blue-500 uppercase tracking-widest mb-2">Demo Credentials</p>
-              <div className="flex justify-between text-[10px] font-mono text-gray-500">
-                <span>ID: admin</span>
-                <span>CODE: password123</span>
-              </div>
-            </div>
-
             {error && (
               <motion.div 
                 initial={{ opacity: 0, scale: 0.95 }}
