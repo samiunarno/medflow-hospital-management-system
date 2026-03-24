@@ -344,33 +344,33 @@ export default function LandingPage() {
       </section>
 
       {/* Workflow Section - Professional Process */}
-      <section className="py-12 sm:py-20 lg:py-32 bg-white text-black relative overflow-hidden">
+      <section className="py-12 sm:py-20 lg:py-32 bg-[#050505] text-white relative overflow-hidden border-t border-white/5">
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6 relative z-10">
-          <div className="flex flex-col md:flex-row justify-between items-center md:items-end mb-16 lg:mb-24 gap-8">
-            <div className="max-w-xl text-center md:text-left">
+          <div className="relative flex flex-col md:flex-row justify-between items-center md:items-end mb-16 lg:mb-24 gap-8">
+            <div className="max-w-xl text-center md:text-left relative z-10">
               <h2 className="text-4xl sm:text-6xl lg:text-7xl font-display font-black uppercase tracking-tighter leading-none mb-8">
                 Seamless <br />Integration
               </h2>
-              <p className="text-gray-400 text-sm font-bold uppercase tracking-widest">
+              <p className="text-gray-500 text-sm font-bold uppercase tracking-widest">
                 Deployment to full operational status in under 14 days.
               </p>
             </div>
-            <div className="hidden lg:block text-[10vw] font-display font-black text-gray-50 uppercase leading-none">
+            <div className="hidden lg:block absolute right-0 bottom-0 text-[12vw] font-display font-black text-white/5 uppercase leading-none select-none pointer-events-none -z-10">
               Process
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-1 bg-gray-100 border border-gray-100">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-1 bg-white/5 border border-white/5">
             {[
               { step: "01", title: "Infrastructure Audit", desc: "We map your existing data silos and hardware nodes." },
               { step: "02", title: "Core Deployment", desc: "MedFlow Core is initialized on your private cloud." },
               { step: "03", title: "Data Migration", desc: "Legacy records are sanitized and ingested into the mesh." },
               { step: "04", title: "Operational Live", desc: "Full system activation with zero-downtime transition." }
             ].map((item, i) => (
-              <div key={i} className="p-8 sm:p-10 lg:p-12 bg-white hover:bg-gray-50 transition-colors">
-                <span className="text-4xl sm:text-5xl font-display font-black text-blue-100 mb-6 sm:mb-8 block">{item.step}</span>
+              <div key={i} className="p-8 sm:p-10 lg:p-12 bg-[#050505] hover:bg-white/2 transition-colors group">
+                <span className="text-4xl sm:text-5xl font-display font-black text-blue-500/20 group-hover:text-blue-500 transition-colors mb-6 sm:mb-8 block">{item.step}</span>
                 <h4 className="text-lg sm:text-xl font-display font-bold uppercase tracking-tighter mb-4">{item.title}</h4>
-                <p className="text-gray-400 text-[10px] sm:text-xs leading-relaxed uppercase tracking-widest">{item.desc}</p>
+                <p className="text-gray-500 text-[10px] sm:text-xs leading-relaxed uppercase tracking-widest">{item.desc}</p>
               </div>
             ))}
           </div>
@@ -416,18 +416,19 @@ export default function LandingPage() {
       </section>
 
       {/* CTA Section - Atmospheric */}
-      <section className="py-16 sm:py-24 lg:py-48 px-4 sm:px-6 relative overflow-hidden">
-        <div className="max-w-4xl mx-auto text-center relative z-10">
+      <section className="py-16 sm:py-24 lg:py-48 px-4 sm:px-6 relative overflow-hidden flex flex-col items-center justify-center">
+        <div className="max-w-7xl mx-auto text-center relative z-10 flex flex-col items-center">
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             whileInView={{ opacity: 1, scale: 1 }}
             transition={{ duration: 1 }}
+            className="flex flex-col items-center text-center"
           >
-            <h2 className="text-[12vw] sm:text-[8vw] lg:text-[10vw] font-display font-black leading-[0.85] tracking-tighter uppercase mb-12">
+            <h2 className="text-[12vw] sm:text-[8vw] lg:text-[9vw] font-display font-black leading-[0.85] tracking-tighter uppercase mb-12 text-center">
               Ready to <br />
               <span className="text-blue-500">Initialize?</span>
             </h2>
-            <p className="text-gray-500 text-sm max-w-xl mx-auto mb-16 font-bold uppercase tracking-[0.3em]">
+            <p className="text-gray-500 text-sm max-w-xl mx-auto mb-16 font-bold uppercase tracking-[0.3em] text-center">
               Join the elite institutions building the future of medical care on MedFlow.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-6">

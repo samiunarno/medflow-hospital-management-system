@@ -219,9 +219,9 @@ export default function Register() {
                     onChange={handleChange}
                     className="w-full bg-white/5 border border-white/10 rounded-[2rem] py-5 px-8 text-sm font-bold tracking-widest focus:ring-2 focus:ring-blue-500/20 focus:bg-white/10 transition-all outline-none appearance-none"
                   >
-                    <option value="Male">MALE</option>
-                    <option value="Female">FEMALE</option>
-                    <option value="Other">OTHER</option>
+                    <option value="Male" className="bg-[#050505]">MALE</option>
+                    <option value="Female" className="bg-[#050505]">FEMALE</option>
+                    <option value="Other" className="bg-[#050505]">OTHER</option>
                   </select>
                 </div>
 
@@ -271,9 +271,9 @@ export default function Register() {
                           required
                           className="w-full bg-white/5 border border-white/10 rounded-[2rem] py-5 px-8 text-sm font-bold tracking-widest focus:ring-2 focus:ring-blue-500/20 focus:bg-white/10 transition-all outline-none appearance-none"
                         >
-                          <option value="">SELECT DEPT</option>
+                          <option value="" className="bg-[#050505]">SELECT DEPT</option>
                           {departments.map(dept => (
-                            <option key={dept.id} value={dept.id}>{dept.name.toUpperCase()}</option>
+                            <option key={dept.id} value={dept.id} className="bg-[#050505]">{dept.name.toUpperCase()}</option>
                           ))}
                         </select>
                       </div>
@@ -294,8 +294,8 @@ export default function Register() {
                           onChange={handleChange}
                           className="w-full bg-white/5 border border-white/10 rounded-[2rem] py-5 px-8 text-sm font-bold tracking-widest focus:ring-2 focus:ring-blue-500/20 focus:bg-white/10 transition-all outline-none appearance-none"
                         >
-                          <option value="Outpatient">OUTPATIENT</option>
-                          <option value="Inpatient">INPATIENT</option>
+                          <option value="Outpatient" className="bg-[#050505]">OUTPATIENT</option>
+                          <option value="Inpatient" className="bg-[#050505]">INPATIENT</option>
                         </select>
                       </div>
                       <div className="space-y-2">
@@ -307,9 +307,9 @@ export default function Register() {
                           required
                           className="w-full bg-white/5 border border-white/10 rounded-[2rem] py-5 px-8 text-sm font-bold tracking-widest focus:ring-2 focus:ring-blue-500/20 focus:bg-white/10 transition-all outline-none appearance-none"
                         >
-                          <option value="">SELECT DEPT</option>
+                          <option value="" className="bg-[#050505]">SELECT DEPT</option>
                           {departments.map(dept => (
-                            <option key={dept.id} value={dept.id}>{dept.name.toUpperCase()}</option>
+                            <option key={dept.id} value={dept.id} className="bg-[#050505]">{dept.name.toUpperCase()}</option>
                           ))}
                         </select>
                       </div>

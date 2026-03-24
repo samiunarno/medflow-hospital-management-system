@@ -82,9 +82,9 @@ export default function Dashboard() {
       return <StaffDashboard user={user} stats={stats} />;
     default:
       return (
-        <div className="bg-white p-12 rounded-[3rem] text-center shadow-sm border border-gray-100">
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">Welcome to MedFlow</h2>
-          <p className="text-gray-500 max-w-md mx-auto">
+        <div className="bg-white/2 p-12 rounded-[3rem] text-center border border-white/5">
+          <h2 className="text-3xl font-display font-bold text-white mb-4">Welcome to MedFlow</h2>
+          <p className="text-gray-500 max-w-md mx-auto font-medium">
             Your account is currently being reviewed by our administrators. You will receive access once approved.
           </p>
         </div>
