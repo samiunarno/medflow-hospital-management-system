@@ -7,6 +7,10 @@ export interface IUser extends Document {
   role: 'Admin' | 'Doctor' | 'Patient' | 'Staff';
   reference_id?: string;
   status: 'Pending' | 'Approved' | 'Rejected';
+  id_card_url?: string;
+  id_card_uploaded_at?: Date;
+  account_request: 'none' | 'deactivate' | 'delete';
+  account_request_status: 'none' | 'pending' | 'approved' | 'rejected';
   createdAt: Date;
   comparePassword(password: string): Promise<boolean>;
 }
@@ -17,6 +21,10 @@ const userSchema = new mongoose.Schema({
   role: { type: String, enum: ['Admin', 'Doctor', 'Patient', 'Staff'], required: true },
   reference_id: { type: String },
   status: { type: String, enum: ['Pending', 'Approved', 'Rejected'], default: 'Pending' },
+  id_card_url: { type: String },
+  id_card_uploaded_at: { type: Date },
+  account_request: { type: String, enum: ['none', 'deactivate', 'delete'], default: 'none' },
+  account_request_status: { type: String, enum: ['none', 'pending', 'approved', 'rejected'], default: 'none' },
   createdAt: { type: Date, default: Date.now }
 });
 

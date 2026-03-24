@@ -107,3 +107,59 @@ export const deleteUser = async (req: Request, res: Response) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+export const uploadIdCard = async (req: any, res: Response) => {
+  try {
+    const { id_card_url } = req.body;
+    await User.findByIdAndUpdate(req.user.id, { 
+      id_card_url, 
+      id_card_uploaded_at: new Date() 
+    });
+    res.json({ message: 'ID Card uploaded successfully' });
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+export const requestAccountAction = async (req: any, res: Response) => {
+  try {
+    const { action } = req.body; // 'deactivate' or 'delete'
+    await User.findByIdAndUpdate(req.user.id, { 
+      account_request: action,
+      account_request_status: 'pending'
+    });
+    res.json({ message: `Account ${action} request submitted to admin` });
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+export const handleAccountRequest = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body; // 'approved' or 'rejected'
+    const user: any = await User.findById(id);
+    
+    if (status === 'approved') {
+      if (user.account_request === 'delete') {
+        await User.findByIdAndDelete(id);
+        return res.json({ message: 'User deleted as requested' });
+      } else if (user.account_request === 'deactivate') {
+        await User.findByIdAndUpdate(id, { 
+          status: 'Rejected', // Deactivated users are set to Rejected status
+          account_request: 'none',
+          account_request_status: 'approved'
+        });
+        return res.json({ message: 'User deactivated as requested' });
+      }
+    } else {
+      await User.findByIdAndUpdate(id, { 
+        account_request: 'none',
+        account_request_status: 'rejected'
+      });
+      res.json({ message: 'Account request rejected' });
+    }
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+};

@@ -13,7 +13,10 @@ import {
   MoreVertical,
   X,
   Loader2,
-  Lock
+  Lock,
+  FileCheck,
+  UserX,
+  AlertTriangle
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -92,6 +95,22 @@ export default function UserManagement() {
     }
   };
 
+  const handleAccountRequest = async (id: string, status: 'approved' | 'rejected') => {
+    try {
+      const res = await fetch(`/api/auth/admin/handle-account-request/${id}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ status })
+      });
+      if (res.ok) fetchUsers();
+    } catch (err) {
+      console.error('Failed to handle account request');
+    }
+  };
+
   const openEditModal = (user: any) => {
     setEditingUser(user);
     setFormData({
@@ -150,8 +169,8 @@ export default function UserManagement() {
               <tr className="border-b border-white/5 bg-white/2">
                 <th className="px-8 py-6 text-[10px] font-bold text-gray-600 uppercase tracking-[0.2em]">User</th>
                 <th className="px-8 py-6 text-[10px] font-bold text-gray-600 uppercase tracking-[0.2em]">Role</th>
-                <th className="px-8 py-6 text-[10px] font-bold text-gray-600 uppercase tracking-[0.2em]">Status</th>
-                <th className="px-8 py-6 text-[10px] font-bold text-gray-600 uppercase tracking-[0.2em]">Created</th>
+                <th className="px-8 py-6 text-[10px] font-bold text-gray-600 uppercase tracking-[0.2em]">Verification</th>
+                <th className="px-8 py-6 text-[10px] font-bold text-gray-600 uppercase tracking-[0.2em]">Account Request</th>
                 <th className="px-8 py-6 text-[10px] font-bold text-gray-600 uppercase tracking-[0.2em] text-right">Actions</th>
               </tr>
             </thead>
@@ -190,16 +209,43 @@ export default function UserManagement() {
                       </div>
                     </td>
                     <td className="px-8 py-6">
-                      <span className={`text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest ${
-                        u.status === 'Approved' ? 'bg-green-500/10 text-green-400' : 
-                        u.status === 'Pending' ? 'bg-orange-500/10 text-orange-400' : 
-                        'bg-red-500/10 text-red-400'
-                      }`}>
-                        {u.status}
-                      </span>
+                      {u.id_card_url ? (
+                        <div className="flex items-center gap-2 text-green-400">
+                          <FileCheck className="w-4 h-4" />
+                          <span className="text-[10px] font-bold uppercase tracking-widest">Uploaded</span>
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-2 text-orange-400">
+                          <AlertTriangle className="w-4 h-4" />
+                          <span className="text-[10px] font-bold uppercase tracking-widest">Missing</span>
+                        </div>
+                      )}
                     </td>
                     <td className="px-8 py-6">
-                      <p className="text-sm text-gray-500">{new Date(u.createdAt).toLocaleDateString()}</p>
+                      {u.account_request !== 'none' && u.account_request_status === 'pending' ? (
+                        <div className="flex items-center gap-3">
+                          <div className="flex items-center gap-1.5 text-orange-400">
+                            <UserX className="w-4 h-4" />
+                            <span className="text-[10px] font-bold uppercase tracking-widest">{u.account_request}</span>
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <button 
+                              onClick={() => handleAccountRequest(u._id, 'approved')}
+                              className="p-1 hover:bg-green-600/10 text-green-400 rounded transition-all"
+                            >
+                              <CheckCircle className="w-3 h-3" />
+                            </button>
+                            <button 
+                              onClick={() => handleAccountRequest(u._id, 'rejected')}
+                              className="p-1 hover:bg-red-600/10 text-red-400 rounded transition-all"
+                            >
+                              <XCircle className="w-3 h-3" />
+                            </button>
+                          </div>
+                        </div>
+                      ) : (
+                        <span className="text-[10px] text-gray-600 font-bold uppercase tracking-widest">None</span>
+                      )}
                     </td>
                     <td className="px-8 py-6 text-right">
                       <div className="flex items-center justify-end gap-2">

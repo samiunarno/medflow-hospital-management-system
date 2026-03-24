@@ -13,6 +13,7 @@ import Wards from './pages/Wards';
 import Analytics from './pages/Analytics';
 import MedicalRecords from './pages/MedicalRecords';
 import UserManagement from './pages/UserManagement';
+import Settings from './pages/Settings';
 
 function PrivateRoute({ children, roles }: { children: React.ReactNode; roles?: string[] }) {
   const { user, loading } = useAuth();
@@ -41,6 +42,7 @@ export default function App() {
           <Route path="/records" element={<PrivateRoute roles={['Admin', 'Doctor', 'Patient']}><MedicalRecords /></PrivateRoute>} />
           <Route path="/analytics" element={<PrivateRoute roles={['Admin']}><Analytics /></PrivateRoute>} />
           <Route path="/users" element={<PrivateRoute roles={['Admin']}><UserManagement /></PrivateRoute>} />
+          <Route path="/settings" element={<PrivateRoute><Settings /></PrivateRoute>} />
           
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>

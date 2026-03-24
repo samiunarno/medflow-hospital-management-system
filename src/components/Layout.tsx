@@ -56,6 +56,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     { label: 'Medical Records', icon: FileText, path: '/records', roles: ['Admin', 'Doctor', 'Patient'] },
     { label: 'Analytics', icon: BarChart3, path: '/analytics', roles: ['Admin'] },
     { label: 'Users', icon: Users, path: '/users', roles: ['Admin'] },
+    { label: 'Settings', icon: Settings, path: '/settings', roles: ['Admin', 'Doctor', 'Patient', 'Staff'] },
   ];
 
   const filteredNavItems = navItems.filter(item => user && item.roles.includes(user.role));
