@@ -32,6 +32,7 @@ import {
   Cell
 } from 'recharts';
 import { motion } from 'motion/react';
+import { Link } from 'react-router-dom';
 
 export default function AdminDashboard({ stats, trends, pendingUsers, onApprove }: any) {
   const COLORS = ['#3b82f6', '#8b5cf6', '#f59e0b', '#ef4444'];
@@ -242,9 +243,12 @@ export default function AdminDashboard({ stats, trends, pendingUsers, onApprove 
                 className="pl-14 pr-8 py-4 bg-white/5 border border-white/10 rounded-2xl text-[10px] font-bold tracking-[0.2em] w-full sm:w-64 focus:ring-2 focus:ring-blue-500/20 transition-all placeholder:text-gray-700"
               />
             </div>
-            <button className="w-full sm:w-auto bg-white/5 text-white px-8 py-4 rounded-2xl text-[10px] font-bold uppercase tracking-widest hover:bg-white/10 transition-all border border-white/10">
-              View Archive
-            </button>
+            <Link 
+              to="/users"
+              className="w-full sm:w-auto bg-blue-600/10 text-blue-400 px-8 py-4 rounded-2xl text-[10px] font-bold uppercase tracking-widest hover:bg-blue-600 hover:text-white transition-all border border-blue-500/20 text-center"
+            >
+              Manage All Users
+            </Link>
           </div>
         </div>
         <div className="overflow-x-auto relative z-10">

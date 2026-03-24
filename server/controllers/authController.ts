@@ -55,3 +55,55 @@ export const approveUser = async (req: Request, res: Response) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+export const getAllUsers = async (req: Request, res: Response) => {
+  try {
+    const users = await User.find().select('-password');
+    res.json(users);
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+export const createUser = async (req: Request, res: Response) => {
+  try {
+    const { username, password, role, status } = req.body;
+    const existingUser = await User.findOne({ username });
+    if (existingUser) {
+      return res.status(400).json({ error: 'Username already exists' });
+    }
+    const user = new User({ username, password, role, status: status || 'Approved' });
+    await user.save();
+    res.status(201).json({ message: 'User created successfully' });
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+export const updateUser = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const { username, role, status, password } = req.body;
+    const updateData: any = { username, role, status };
+    if (password) {
+      const user: any = await User.findById(id);
+      user.password = password;
+      await user.save();
+      return res.json({ message: 'User updated successfully (including password)' });
+    }
+    await User.findByIdAndUpdate(id, updateData);
+    res.json({ message: 'User updated successfully' });
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+export const deleteUser = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    await User.findByIdAndDelete(id);
+    res.json({ message: 'User deleted successfully' });
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+};
