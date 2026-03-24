@@ -14,12 +14,84 @@ import {
   Plus,
   Bell,
   CheckCircle2,
-  TrendingUp
+  TrendingUp,
+  Search,
+  Star,
+  User,
+  MessageSquare,
+  Loader2,
+  Stethoscope
 } from 'lucide-react';
-import { motion } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../AuthContext';
 
 export default function PatientDashboard({ user }: any) {
+  const { token } = useAuth();
+  const [doctors, setDoctors] = React.useState<any[]>([]);
+  const [searchTerm, setSearchTerm] = React.useState('');
+  const [loadingDoctors, setLoadingDoctors] = React.useState(false);
+  const [ratingDoctor, setRatingDoctor] = React.useState<any>(null);
+  const [ratingValue, setRatingValue] = React.useState(5);
+  const [ratingComment, setRatingComment] = React.useState('');
+  const [isSubmittingRating, setIsSubmittingRating] = React.useState(false);
+
+  React.useEffect(() => {
+    fetchDoctors();
+  }, []);
+
+  const fetchDoctors = async () => {
+    setLoadingDoctors(true);
+    try {
+      const res = await fetch('/api/admin/users', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setDoctors(data.filter((u: any) => u.role === 'Doctor' && u.status === 'Approved' && !u.isBanned));
+      }
+    } catch (err) {
+      console.error('Failed to fetch doctors:', err);
+    } finally {
+      setLoadingDoctors(false);
+    }
+  };
+
+  const handleRateDoctor = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!ratingDoctor) return;
+    setIsSubmittingRating(true);
+    try {
+      const res = await fetch('/api/auth/rate-doctor', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          doctorId: ratingDoctor._id,
+          rating: ratingValue,
+          comment: ratingComment
+        })
+      });
+      if (res.ok) {
+        setRatingDoctor(null);
+        setRatingComment('');
+        setRatingValue(5);
+        fetchDoctors();
+      }
+    } catch (err) {
+      console.error('Failed to submit rating:', err);
+    } finally {
+      setIsSubmittingRating(false);
+    }
+  };
+
+  const filteredDoctors = doctors.filter(doc => 
+    doc.fullName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    doc.doctorType?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <div className="space-y-10 pb-12">
       {/* Welcome Header */}
@@ -165,6 +237,147 @@ export default function PatientDashboard({ user }: any) {
           </button>
         </div>
       </div>
+
+      {/* Find Doctors Section */}
+      <div className="bg-white/2 rounded-[2rem] lg:rounded-[3rem] border border-white/5 overflow-hidden">
+        <div className="p-8 lg:p-12 border-b border-white/5 flex flex-col sm:flex-row sm:items-center justify-between gap-8">
+          <div>
+            <h3 className="text-2xl lg:text-3xl font-display font-bold text-white mb-2 uppercase tracking-tighter flex items-center gap-4">
+              <Stethoscope className="w-8 h-8 text-indigo-500" />
+              Find Specialists
+            </h3>
+            <p className="text-[10px] text-gray-600 font-bold uppercase tracking-[0.3em]">Browse and rate our medical professionals</p>
+          </div>
+          <div className="relative w-full sm:w-80">
+            <Search className="w-4 h-4 absolute left-6 top-1/2 -translate-y-1/2 text-gray-600" />
+            <input 
+              type="text" 
+              placeholder="SEARCH BY NAME OR TYPE..." 
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-14 pr-8 py-4 bg-white/5 border border-white/10 rounded-2xl text-[10px] font-bold tracking-[0.2em] focus:ring-2 focus:ring-indigo-500/20 transition-all placeholder:text-gray-700"
+            />
+          </div>
+        </div>
+        
+        <div className="p-8 lg:p-12">
+          {loadingDoctors ? (
+            <div className="flex flex-col items-center justify-center py-20 gap-4">
+              <Loader2 className="w-10 h-10 text-indigo-500 animate-spin" />
+              <p className="text-[10px] font-bold text-gray-600 uppercase tracking-widest">Scanning Medical Registry...</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+              {filteredDoctors.map((doc) => (
+                <motion.div 
+                  key={doc._id}
+                  whileHover={{ y: -10 }}
+                  className="bg-white/2 border border-white/5 rounded-[2rem] p-8 relative overflow-hidden group"
+                >
+                  <div className="flex items-start justify-between mb-8 relative z-10">
+                    <div className="w-16 h-16 bg-indigo-600/10 border border-indigo-500/20 rounded-2xl flex items-center justify-center text-indigo-400 font-display font-bold text-2xl group-hover:bg-indigo-600 group-hover:text-white transition-all duration-500">
+                      {doc.fullName?.[0] || doc.username[0].toUpperCase()}
+                    </div>
+                    <div className="flex flex-col items-end">
+                      <div className="flex items-center gap-1 text-amber-400 mb-1">
+                        <Star className="w-4 h-4 fill-current" />
+                        <span className="text-sm font-bold">{doc.averageRating?.toFixed(1) || '0.0'}</span>
+                      </div>
+                      <span className="text-[8px] font-bold text-gray-600 uppercase tracking-widest">({doc.ratings?.length || 0} reviews)</span>
+                    </div>
+                  </div>
+                  
+                  <div className="relative z-10 mb-8">
+                    <h4 className="text-xl font-display font-bold text-white mb-1 uppercase tracking-tight">{doc.fullName || doc.username}</h4>
+                    <p className="text-[10px] font-bold text-indigo-400 uppercase tracking-[0.2em] mb-4">{doc.doctorType || 'General Practitioner'}</p>
+                    <div className="flex items-center gap-4 text-xs font-medium text-gray-500">
+                      <span className="flex items-center gap-2">
+                        <User className="w-3 h-3" />
+                        {doc.gender}
+                      </span>
+                      <span className="flex items-center gap-2">
+                        <Clock className="w-3 h-3" />
+                        {doc.age} Years
+                      </span>
+                    </div>
+                  </div>
+
+                  <button 
+                    onClick={() => setRatingDoctor(doc)}
+                    className="w-full py-4 bg-white/5 border border-white/10 rounded-2xl text-[10px] font-bold text-white uppercase tracking-widest hover:bg-indigo-600 hover:border-indigo-500 transition-all flex items-center justify-center gap-3 relative z-10"
+                  >
+                    <Star className="w-4 h-4" />
+                    Rate Doctor
+                  </button>
+
+                  <div className="absolute -right-12 -bottom-12 w-48 h-48 bg-indigo-600/5 rounded-full blur-3xl opacity-50 group-hover:scale-150 transition-transform duration-1000" />
+                </motion.div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Rating Modal */}
+      <AnimatePresence>
+        {ratingDoctor && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 backdrop-blur-xl bg-black/60">
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="bg-[#0a0a0a] border border-white/10 rounded-[3rem] w-full max-w-lg overflow-hidden shadow-2xl"
+            >
+              <div className="p-10 border-b border-white/5 flex items-center justify-between">
+                <div>
+                  <h3 className="text-2xl font-display font-bold text-white uppercase tracking-tight">Rate Experience</h3>
+                  <p className="text-[10px] text-gray-600 font-bold uppercase tracking-[0.3em] mt-1">Dr. {ratingDoctor.fullName || ratingDoctor.username}</p>
+                </div>
+                <button onClick={() => setRatingDoctor(null)} className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center text-gray-500 hover:bg-red-600 hover:text-white transition-all">
+                  <Plus className="w-6 h-6 rotate-45" />
+                </button>
+              </div>
+              <form onSubmit={handleRateDoctor} className="p-10 space-y-8">
+                <div className="space-y-4">
+                  <label className="text-[10px] font-bold text-gray-600 uppercase tracking-[0.3em] ml-4">Select Rating</label>
+                  <div className="flex items-center justify-center gap-4 py-6 bg-white/2 rounded-[2rem] border border-white/5">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <button
+                        key={star}
+                        type="button"
+                        onClick={() => setRatingValue(star)}
+                        className={`p-2 transition-all ${ratingValue >= star ? 'text-amber-400 scale-125' : 'text-gray-800 hover:text-gray-600'}`}
+                      >
+                        <Star className={`w-8 h-8 ${ratingValue >= star ? 'fill-current' : ''}`} />
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <label className="text-[10px] font-bold text-gray-600 uppercase tracking-[0.3em] ml-4">Your Feedback</label>
+                  <textarea
+                    required
+                    value={ratingComment}
+                    onChange={(e) => setRatingComment(e.target.value)}
+                    className="w-full bg-white/5 border border-white/10 rounded-[2rem] p-8 text-sm font-medium text-white focus:ring-2 focus:ring-indigo-500 outline-none transition-all min-h-[150px] resize-none"
+                    placeholder="Describe your experience with this doctor..."
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={isSubmittingRating}
+                  className="w-full bg-indigo-600 text-white py-6 rounded-[2rem] font-bold text-xs uppercase tracking-widest hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-600/20 flex items-center justify-center gap-3 disabled:opacity-50"
+                >
+                  {isSubmittingRating ? <Loader2 className="w-5 h-5 animate-spin" /> : <CheckCircle2 className="w-5 h-5" />}
+                  {isSubmittingRating ? 'Submitting...' : 'Submit Rating'}
+                </button>
+              </form>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

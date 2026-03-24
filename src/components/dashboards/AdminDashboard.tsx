@@ -35,7 +35,35 @@ import { motion } from 'motion/react';
 import { Link } from 'react-router-dom';
 
 export default function AdminDashboard({ stats, trends, pendingUsers, onApprove }: any) {
+  const [searchTerm, setSearchTerm] = React.useState('');
   const COLORS = ['#3b82f6', '#8b5cf6', '#f59e0b', '#ef4444'];
+
+  const filteredPendingUsers = pendingUsers?.filter((user: any) => 
+    user.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    user._id.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const handleExport = () => {
+    const headers = ['ID', 'Username', 'Role', 'Status', 'Created At'];
+    const csvData = pendingUsers.map((u: any) => [
+      u._id,
+      u.username,
+      u.role,
+      u.status,
+      new Date(u.createdAt).toLocaleString()
+    ]);
+    
+    const csvContent = [headers, ...csvData].map(e => e.join(",")).join("\n");
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+    link.setAttribute("href", url);
+    link.setAttribute("download", `pending_users_${new Date().toISOString().split('T')[0]}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   const pieData = [
     { name: 'Occupied', value: stats?.occupiedBeds || 0 },
@@ -65,7 +93,10 @@ export default function AdminDashboard({ stats, trends, pendingUsers, onApprove 
             <Calendar className="w-4 h-4 text-blue-500" />
             23 MAR 2026 • 14:27 UTC
           </div>
-          <button className="bg-white text-black px-8 py-4 rounded-2xl font-bold text-[10px] uppercase tracking-widest hover:bg-blue-600 hover:text-white transition-all duration-500 shadow-2xl shadow-white/5 flex items-center gap-3">
+          <button 
+            onClick={handleExport}
+            className="bg-white text-black px-8 py-4 rounded-2xl font-bold text-[10px] uppercase tracking-widest hover:bg-blue-600 hover:text-white transition-all duration-500 shadow-2xl shadow-white/5 flex items-center gap-3"
+          >
             Export Telemetry
             <ArrowUpRight className="w-4 h-4" />
           </button>
@@ -240,6 +271,8 @@ export default function AdminDashboard({ stats, trends, pendingUsers, onApprove 
               <input 
                 type="text" 
                 placeholder="SCAN USERS..." 
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-14 pr-8 py-4 bg-white/5 border border-white/10 rounded-2xl text-[10px] font-bold tracking-[0.2em] w-full sm:w-64 focus:ring-2 focus:ring-blue-500/20 transition-all placeholder:text-gray-700"
               />
             </div>
@@ -262,7 +295,7 @@ export default function AdminDashboard({ stats, trends, pendingUsers, onApprove 
               </tr>
             </thead>
             <tbody className="divide-y divide-white/5">
-              {pendingUsers?.map((user: any) => (
+              {filteredPendingUsers?.map((user: any) => (
                 <tr key={user._id} className="hover:bg-white/5 transition-all duration-500 group/row">
                   <td className="px-6 lg:px-12 py-6 lg:py-10">
                     <div className="flex items-center gap-4 lg:gap-6">

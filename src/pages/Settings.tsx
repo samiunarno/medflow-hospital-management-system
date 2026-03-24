@@ -13,16 +13,61 @@ import {
   Eye,
   EyeOff,
   ChevronRight,
-  Loader2
+  Loader2,
+  Mail,
+  Phone,
+  MapPin,
+  Calendar,
+  Save
 } from 'lucide-react';
 import { motion } from 'motion/react';
 
 export default function Settings() {
-  const { user, token, logout } = useAuth();
+  const { user, token, logout, setUser } = useAuth();
   const [isUploading, setIsUploading] = useState(false);
   const [uploadSuccess, setUploadSuccess] = useState(false);
   const [requestStatus, setRequestStatus] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSavingProfile, setIsSavingProfile] = useState(false);
+  const [profileMessage, setProfileMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
+
+  const [profileData, setProfileData] = useState({
+    fullName: user?.fullName || '',
+    age: user?.age || '',
+    gender: user?.gender || 'Male',
+    phone: user?.phone || '',
+    address: user?.address || '',
+    password: '',
+    patientType: user?.patientType || '',
+    doctorType: user?.doctorType || ''
+  });
+
+  const handleProfileUpdate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSavingProfile(true);
+    setProfileMessage(null);
+    try {
+      const res = await fetch('/api/auth/profile', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(profileData)
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setProfileMessage({ type: 'success', text: 'Profile updated successfully' });
+        setUser({ ...user, ...data.user });
+      } else {
+        setProfileMessage({ type: 'error', text: data.error || 'Update failed' });
+      }
+    } catch (err) {
+      setProfileMessage({ type: 'error', text: 'Connection failed' });
+    } finally {
+      setIsSavingProfile(false);
+    }
+  };
 
   const handleIdUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -118,6 +163,105 @@ export default function Settings() {
 
         {/* Main Settings */}
         <div className="md:col-span-2 space-y-8">
+          {/* Profile Information Section */}
+          <section className="bg-white/2 border border-white/5 rounded-[2rem] overflow-hidden">
+            <div className="p-8 border-b border-white/5 flex items-center justify-between">
+              <div>
+                <h3 className="text-lg font-bold text-white uppercase tracking-tight">Profile Information</h3>
+                <p className="text-xs text-gray-500 font-medium mt-1">Update your personal and professional details.</p>
+              </div>
+              <User className="w-6 h-6 text-blue-400" />
+            </div>
+            <div className="p-8">
+              <form onSubmit={handleProfileUpdate} className="space-y-6">
+                {profileMessage && (
+                  <div className={`p-4 rounded-2xl text-xs font-bold uppercase tracking-widest border ${
+                    profileMessage.type === 'success' ? 'bg-green-500/10 border-green-500/20 text-green-400' : 'bg-red-500/10 border-red-500/20 text-red-400'
+                  }`}>
+                    {profileMessage.text}
+                  </div>
+                )}
+                
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-bold text-gray-600 uppercase tracking-[0.3em] ml-4">Full Name</label>
+                    <input
+                      type="text"
+                      value={profileData.fullName}
+                      onChange={(e) => setProfileData({ ...profileData, fullName: e.target.value })}
+                      className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 text-sm font-bold tracking-widest focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                      placeholder="YOUR FULL NAME"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-bold text-gray-600 uppercase tracking-[0.3em] ml-4">Phone Number</label>
+                    <input
+                      type="tel"
+                      value={profileData.phone}
+                      onChange={(e) => setProfileData({ ...profileData, phone: e.target.value })}
+                      className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 text-sm font-bold tracking-widest focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                      placeholder="+1 (555) 000-0000"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-bold text-gray-600 uppercase tracking-[0.3em] ml-4">Age</label>
+                    <input
+                      type="number"
+                      value={profileData.age}
+                      onChange={(e) => setProfileData({ ...profileData, age: e.target.value })}
+                      className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 text-sm font-bold tracking-widest focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                      placeholder="25"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-bold text-gray-600 uppercase tracking-[0.3em] ml-4">Gender</label>
+                    <select
+                      value={profileData.gender}
+                      onChange={(e) => setProfileData({ ...profileData, gender: e.target.value as any })}
+                      className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 text-sm font-bold tracking-widest focus:ring-2 focus:ring-blue-500 outline-none transition-all appearance-none"
+                    >
+                      <option value="Male" className="bg-[#0a0a0a]">MALE</option>
+                      <option value="Female" className="bg-[#0a0a0a]">FEMALE</option>
+                      <option value="Other" className="bg-[#0a0a0a]">OTHER</option>
+                    </select>
+                  </div>
+                  <div className="space-y-2 sm:col-span-2">
+                    <label className="text-[10px] font-bold text-gray-600 uppercase tracking-[0.3em] ml-4">Address</label>
+                    <input
+                      type="text"
+                      value={profileData.address}
+                      onChange={(e) => setProfileData({ ...profileData, address: e.target.value })}
+                      className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 text-sm font-bold tracking-widest focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                      placeholder="YOUR RESIDENTIAL ADDRESS"
+                    />
+                  </div>
+                  <div className="space-y-2 sm:col-span-2">
+                    <label className="text-[10px] font-bold text-gray-600 uppercase tracking-[0.3em] ml-4">New Password (Leave blank to keep current)</label>
+                    <div className="relative">
+                      <Lock className="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-600" />
+                      <input
+                        type="password"
+                        value={profileData.password}
+                        onChange={(e) => setProfileData({ ...profileData, password: e.target.value })}
+                        className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-14 pr-6 text-sm font-bold tracking-widest focus:ring-2 focus:ring-blue-500 outline-none transition-all placeholder:text-gray-800"
+                        placeholder="••••••••"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={isSavingProfile}
+                  className="w-full bg-blue-600 text-white py-4 rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-blue-700 transition-all shadow-lg shadow-blue-500/20 flex items-center justify-center gap-2 disabled:opacity-50"
+                >
+                  {isSavingProfile ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+                  {isSavingProfile ? 'Saving Changes...' : 'Update Profile Information'}
+                </button>
+              </form>
+            </div>
+          </section>
+
           {/* ID Verification Section */}
           <section className="bg-white/2 border border-white/5 rounded-[2rem] overflow-hidden">
             <div className="p-8 border-b border-white/5 flex items-center justify-between">

@@ -16,7 +16,11 @@ import {
   Lock,
   FileCheck,
   UserX,
-  AlertTriangle
+  AlertTriangle,
+  Ban,
+  Download,
+  Mail,
+  MapPin
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -111,6 +115,67 @@ export default function UserManagement() {
     }
   };
 
+  const handleBanUser = async (id: string, isBanned: boolean) => {
+    try {
+      const res = await fetch(`/api/auth/admin/ban-user/${id}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ isBanned })
+      });
+      if (res.ok) fetchUsers();
+    } catch (err) {
+      console.error('Failed to ban/unban user');
+    }
+  };
+
+  const handleApproveUser = async (id: string, status: 'Approved' | 'Rejected') => {
+    try {
+      const res = await fetch(`/api/auth/admin/approve-user/${id}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ status })
+      });
+      if (res.ok) fetchUsers();
+    } catch (err) {
+      console.error('Failed to approve/reject user');
+    }
+  };
+
+  const exportToCSV = () => {
+    const headers = ['Username', 'Email', 'Full Name', 'Role', 'Status', 'Banned', 'Age', 'Gender', 'Phone', 'Address'];
+    const csvContent = [
+      headers.join(','),
+      ...users.map(u => [
+        u.username,
+        u.email,
+        u.fullName || '',
+        u.role,
+        u.status,
+        u.isBanned ? 'Yes' : 'No',
+        u.age || '',
+        u.gender || '',
+        u.phone || '',
+        `"${u.address || ''}"`
+      ].join(','))
+    ].join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `medflow_users_${new Date().toISOString().split('T')[0]}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   const openEditModal = (user: any) => {
     setEditingUser(user);
     setFormData({
@@ -134,17 +199,26 @@ export default function UserManagement() {
           <h1 className="text-2xl sm:text-3xl lg:text-4xl font-display font-bold text-white">User Management</h1>
           <p className="text-gray-500 font-medium">Control system access and user roles.</p>
         </div>
-        <button 
-          onClick={() => {
-            setEditingUser(null);
-            setFormData({ username: '', password: '', role: 'Staff', status: 'Approved' });
-            setIsModalOpen(true);
-          }}
-          className="flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-2xl font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-500/20"
-        >
-          <UserPlus className="w-5 h-5" />
-          Create New User
-        </button>
+        <div className="flex items-center gap-4">
+          <button 
+            onClick={exportToCSV}
+            className="flex items-center gap-2 bg-white/5 text-gray-400 px-6 py-3 rounded-2xl font-bold hover:bg-white/10 hover:text-white transition-all border border-white/10"
+          >
+            <Download className="w-5 h-5" />
+            Export Data Sheet
+          </button>
+          <button 
+            onClick={() => {
+              setEditingUser(null);
+              setFormData({ username: '', password: '', role: 'Staff', status: 'Approved' });
+              setIsModalOpen(true);
+            }}
+            className="flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-2xl font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-500/20"
+          >
+            <UserPlus className="w-5 h-5" />
+            Create New User
+          </button>
+        </div>
       </header>
 
       {/* Search Bar */}
@@ -167,10 +241,10 @@ export default function UserManagement() {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="border-b border-white/5 bg-white/2">
-                <th className="px-8 py-6 text-[10px] font-bold text-gray-600 uppercase tracking-[0.2em]">User</th>
-                <th className="px-8 py-6 text-[10px] font-bold text-gray-600 uppercase tracking-[0.2em]">Role</th>
+                <th className="px-8 py-6 text-[10px] font-bold text-gray-600 uppercase tracking-[0.2em]">User Profile</th>
+                <th className="px-8 py-6 text-[10px] font-bold text-gray-600 uppercase tracking-[0.2em]">Contact Info</th>
+                <th className="px-8 py-6 text-[10px] font-bold text-gray-600 uppercase tracking-[0.2em]">Role & Status</th>
                 <th className="px-8 py-6 text-[10px] font-bold text-gray-600 uppercase tracking-[0.2em]">Verification</th>
-                <th className="px-8 py-6 text-[10px] font-bold text-gray-600 uppercase tracking-[0.2em]">Account Request</th>
                 <th className="px-8 py-6 text-[10px] font-bold text-gray-600 uppercase tracking-[0.2em] text-right">Actions</th>
               </tr>
             </thead>
@@ -188,67 +262,120 @@ export default function UserManagement() {
                 </tr>
               ) : (
                 filteredUsers.map((u) => (
-                  <tr key={u._id} className="hover:bg-white/2 transition-colors group">
+                  <tr key={u._id} className={`hover:bg-white/2 transition-colors group ${u.isBanned ? 'opacity-50 grayscale' : ''}`}>
                     <td className="px-8 py-6">
                       <div className="flex items-center gap-4">
-                        <div className="w-10 h-10 rounded-xl bg-blue-600/10 border border-blue-500/20 text-blue-400 flex items-center justify-center font-bold">
-                          {u.username[0].toUpperCase()}
+                        <div className={`w-12 h-12 rounded-2xl flex items-center justify-center font-bold text-lg ${
+                          u.role === 'Admin' ? 'bg-purple-600/20 text-purple-400 border border-purple-500/20' :
+                          u.role === 'Doctor' ? 'bg-blue-600/20 text-blue-400 border border-blue-500/20' :
+                          'bg-green-600/20 text-green-400 border border-green-500/20'
+                        }`}>
+                          {u.fullName ? u.fullName[0].toUpperCase() : u.username[0].toUpperCase()}
                         </div>
                         <div>
-                          <p className="font-bold text-white">{u.username}</p>
-                          <p className="text-[10px] text-gray-600 font-bold uppercase tracking-widest">ID: {u._id.slice(-6)}</p>
+                          <p className="font-bold text-white flex items-center gap-2">
+                            {u.fullName || u.username}
+                            {u.isBanned && <Ban className="w-3 h-3 text-red-500" />}
+                          </p>
+                          <p className="text-[10px] text-gray-600 font-bold uppercase tracking-widest">@{u.username}</p>
                         </div>
                       </div>
                     </td>
                     <td className="px-8 py-6">
-                      <div className="flex items-center gap-2">
-                        <Shield className={`w-4 h-4 ${u.role === 'Admin' ? 'text-purple-400' : 'text-blue-400'}`} />
-                        <span className={`text-xs font-bold uppercase tracking-widest ${u.role === 'Admin' ? 'text-purple-400' : 'text-white'}`}>
-                          {u.role}
-                        </span>
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-2 text-gray-400">
+                          <Mail className="w-3 h-3" />
+                          <span className="text-[10px] font-bold">{u.email}</span>
+                        </div>
+                        {u.phone && (
+                          <div className="flex items-center gap-2 text-gray-500">
+                            <Lock className="w-3 h-3" />
+                            <span className="text-[10px] font-bold">{u.phone}</span>
+                          </div>
+                        )}
                       </div>
                     </td>
                     <td className="px-8 py-6">
-                      {u.id_card_url ? (
-                        <div className="flex items-center gap-2 text-green-400">
-                          <FileCheck className="w-4 h-4" />
-                          <span className="text-[10px] font-bold uppercase tracking-widest">Uploaded</span>
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-2">
+                          <Shield className={`w-4 h-4 ${u.role === 'Admin' ? 'text-purple-400' : 'text-blue-400'}`} />
+                          <span className={`text-xs font-bold uppercase tracking-widest ${u.role === 'Admin' ? 'text-purple-400' : 'text-white'}`}>
+                            {u.role}
+                          </span>
                         </div>
-                      ) : (
-                        <div className="flex items-center gap-2 text-orange-400">
-                          <AlertTriangle className="w-4 h-4" />
-                          <span className="text-[10px] font-bold uppercase tracking-widest">Missing</span>
+                        <div className="flex items-center gap-2">
+                          <div className={`w-2 h-2 rounded-full ${
+                            u.status === 'Approved' ? 'bg-green-500' :
+                            u.status === 'Pending' ? 'bg-orange-500' :
+                            'bg-red-500'
+                          }`} />
+                          <span className={`text-[10px] font-bold uppercase tracking-widest ${
+                            u.status === 'Approved' ? 'text-green-400' :
+                            u.status === 'Pending' ? 'text-orange-400' :
+                            'text-red-400'
+                          }`}>
+                            {u.status}
+                          </span>
                         </div>
-                      )}
+                      </div>
                     </td>
                     <td className="px-8 py-6">
-                      {u.account_request !== 'none' && u.account_request_status === 'pending' ? (
-                        <div className="flex items-center gap-3">
-                          <div className="flex items-center gap-1.5 text-orange-400">
-                            <UserX className="w-4 h-4" />
-                            <span className="text-[10px] font-bold uppercase tracking-widest">{u.account_request}</span>
+                      <div className="space-y-2">
+                        {u.id_card_url ? (
+                          <div className="flex items-center gap-2 text-green-400">
+                            <FileCheck className="w-4 h-4" />
+                            <span className="text-[10px] font-bold uppercase tracking-widest">Verified</span>
                           </div>
-                          <div className="flex items-center gap-1">
-                            <button 
-                              onClick={() => handleAccountRequest(u._id, 'approved')}
-                              className="p-1 hover:bg-green-600/10 text-green-400 rounded transition-all"
-                            >
-                              <CheckCircle className="w-3 h-3" />
-                            </button>
-                            <button 
-                              onClick={() => handleAccountRequest(u._id, 'rejected')}
-                              className="p-1 hover:bg-red-600/10 text-red-400 rounded transition-all"
-                            >
-                              <XCircle className="w-3 h-3" />
-                            </button>
+                        ) : (
+                          <div className="flex items-center gap-2 text-orange-400">
+                            <AlertTriangle className="w-4 h-4" />
+                            <span className="text-[10px] font-bold uppercase tracking-widest">Unverified</span>
                           </div>
-                        </div>
-                      ) : (
-                        <span className="text-[10px] text-gray-600 font-bold uppercase tracking-widest">None</span>
-                      )}
+                        )}
+                        {u.account_request !== 'none' && u.account_request_status === 'pending' && (
+                          <div className="flex items-center gap-2 text-red-400 bg-red-500/10 px-2 py-1 rounded-lg border border-red-500/20">
+                            <UserX className="w-3 h-3" />
+                            <span className="text-[8px] font-bold uppercase tracking-widest">{u.account_request} Request</span>
+                          </div>
+                        )}
+                      </div>
                     </td>
                     <td className="px-8 py-6 text-right">
                       <div className="flex items-center justify-end gap-2">
+                        {u.status === 'Pending' && (
+                          <>
+                            <button 
+                              onClick={() => handleApproveUser(u._id, 'Approved')}
+                              className="p-2 hover:bg-green-600/10 text-green-400 rounded-lg transition-all"
+                              title="Approve User"
+                            >
+                              <CheckCircle className="w-4 h-4" />
+                            </button>
+                            <button 
+                              onClick={() => handleApproveUser(u._id, 'Rejected')}
+                              className="p-2 hover:bg-red-600/10 text-red-400 rounded-lg transition-all"
+                              title="Reject User"
+                            >
+                              <XCircle className="w-4 h-4" />
+                            </button>
+                          </>
+                        )}
+                        {u.account_request !== 'none' && u.account_request_status === 'pending' && (
+                          <button 
+                            onClick={() => handleAccountRequest(u._id, 'approved')}
+                            className="p-2 hover:bg-orange-600/10 text-orange-400 rounded-lg transition-all"
+                            title="Handle Account Request"
+                          >
+                            <UserX className="w-4 h-4" />
+                          </button>
+                        )}
+                        <button 
+                          onClick={() => handleBanUser(u._id, !u.isBanned)}
+                          className={`p-2 rounded-lg transition-all ${u.isBanned ? 'bg-red-600 text-white' : 'hover:bg-red-600/10 text-gray-500 hover:text-red-400'}`}
+                          title={u.isBanned ? 'Unban User' : 'Ban User'}
+                        >
+                          <Ban className="w-4 h-4" />
+                        </button>
                         <button 
                           onClick={() => openEditModal(u)}
                           className="p-2 hover:bg-blue-600/10 text-gray-500 hover:text-blue-400 rounded-lg transition-all"

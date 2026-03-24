@@ -6,14 +6,28 @@ const JWT_SECRET = process.env.JWT_SECRET || 'medflow-secret-key-2026';
 
 export const register = async (req: Request, res: Response) => {
   try {
-    const { username, password, role, reference_id } = req.body;
-    const existingUser = await User.findOne({ username });
+    const { username, email, password, role, reference_id, fullName, gender, age, address, phone, patientType, doctorType } = req.body;
+    const existingUser = await User.findOne({ $or: [{ username }, { email }] });
     if (existingUser) {
-      return res.status(400).json({ error: 'Username already exists' });
+      return res.status(400).json({ error: 'Username or Email already exists' });
     }
-    const user = new User({ username, password, role, reference_id, status: 'Approved' });
+    const user = new User({ 
+      username, 
+      email, 
+      password, 
+      role, 
+      reference_id, 
+      fullName, 
+      gender, 
+      age, 
+      address, 
+      phone, 
+      patientType, 
+      doctorType,
+      status: 'Pending' // New users must be approved by admin
+    });
     await user.save();
-    res.status(201).json({ message: 'User registered successfully. You can now login.' });
+    res.status(201).json({ message: 'Registration successful. Your account is pending admin approval.' });
   } catch (error: any) {
     res.status(500).json({ error: error.message });
   }
@@ -26,11 +40,14 @@ export const login = async (req: Request, res: Response) => {
     if (!user || !(await user.comparePassword(password))) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
+    if (user.isBanned) {
+      return res.status(403).json({ error: 'Your account has been banned. Please contact support.' });
+    }
     if (user.status !== 'Approved') {
       return res.status(403).json({ error: `Your account is ${user.status.toLowerCase()}. Please contact admin.` });
     }
     const token = jwt.sign({ id: user._id, role: user.role }, JWT_SECRET, { expiresIn: '24h' });
-    res.json({ token, user: { id: user._id, username: user.username, role: user.role } });
+    res.json({ token, user: { id: user._id, username: user.username, role: user.role, email: user.email, fullName: user.fullName } });
   } catch (error: any) {
     res.status(500).json({ error: error.message });
   }
@@ -159,6 +176,66 @@ export const handleAccountRequest = async (req: Request, res: Response) => {
       });
       res.json({ message: 'Account request rejected' });
     }
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+export const banUser = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const { isBanned } = req.body;
+    await User.findByIdAndUpdate(id, { isBanned });
+    res.json({ message: `User ${isBanned ? 'banned' : 'unbanned'} successfully` });
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+export const rateDoctor = async (req: any, res: Response) => {
+  try {
+    const { doctorId, rating, comment } = req.body;
+    const doctor: any = await User.findById(doctorId);
+    if (!doctor || doctor.role !== 'Doctor') {
+      return res.status(404).json({ error: 'Doctor not found' });
+    }
+
+    const existingRatingIndex = doctor.ratings.findIndex((r: any) => r.raterId.toString() === req.user.id);
+    if (existingRatingIndex > -1) {
+      doctor.ratings[existingRatingIndex] = { raterId: req.user.id, rating, comment, createdAt: new Date() };
+    } else {
+      doctor.ratings.push({ raterId: req.user.id, rating, comment, createdAt: new Date() });
+    }
+
+    const totalRating = doctor.ratings.reduce((acc: number, r: any) => acc + r.rating, 0);
+    doctor.averageRating = totalRating / doctor.ratings.length;
+    
+    await doctor.save();
+    res.json({ message: 'Rating submitted successfully', averageRating: doctor.averageRating });
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+export const updateProfile = async (req: any, res: Response) => {
+  try {
+    const { fullName, gender, age, address, phone, patientType, doctorType, password } = req.body;
+    const user: any = await User.findById(req.user.id);
+    
+    if (fullName) user.fullName = fullName;
+    if (gender) user.gender = gender;
+    if (age) user.age = age;
+    if (address) user.address = address;
+    if (phone) user.phone = phone;
+    if (patientType) user.patientType = patientType;
+    if (doctorType) user.doctorType = doctorType;
+    
+    if (password) {
+      user.password = password;
+    }
+    
+    await user.save();
+    res.json({ message: 'Profile updated successfully', user: { id: user._id, username: user.username, role: user.role, email: user.email, fullName: user.fullName } });
   } catch (error: any) {
     res.status(500).json({ error: error.message });
   }

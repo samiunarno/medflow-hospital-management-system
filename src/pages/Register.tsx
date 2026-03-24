@@ -6,15 +6,18 @@ import { motion, AnimatePresence } from 'motion/react';
 export default function Register() {
   const [formData, setFormData] = useState({
     username: '',
+    email: '',
     password: '',
     role: 'Patient',
-    name: '',
+    fullName: '',
     age: '',
     gender: 'Male',
-    contact: '',
+    phone: '',
+    address: '',
     specialization: '',
     department_id: '',
-    type: 'Outpatient'
+    patientType: 'Outpatient',
+    doctorType: 'General Practitioner'
   });
   const [departments, setDepartments] = useState<any[]>([]);
   const [error, setError] = useState('');
@@ -37,7 +40,10 @@ export default function Register() {
       const res = await fetch('/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          ...formData,
+          doctorType: formData.role === 'Doctor' ? formData.specialization : undefined,
+        }),
       });
       const data = await res.json();
       if (res.ok) {
@@ -69,10 +75,10 @@ export default function Register() {
           <div className="w-24 h-24 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-8 shadow-[0_0_50px_rgba(34,197,94,0.3)]">
             <CheckCircle2 className="w-12 h-12 text-white" />
           </div>
-          <h2 className="text-4xl font-display font-black uppercase tracking-tighter mb-4">Account Created</h2>
-          <p className="text-gray-400 font-medium mb-8 leading-relaxed">
-            Your medical profile has been initialized. You can now access the MedFlow network using your credentials.
-          </p>
+            <h2 className="text-4xl font-display font-black uppercase tracking-tighter mb-4">Registration Pending</h2>
+            <p className="text-gray-400 font-medium mb-8 leading-relaxed">
+              Your medical profile has been initialized. Your account is currently pending admin approval. You will be able to login once an administrator approves your request.
+            </p>
           <div className="w-full bg-white/5 h-1.5 rounded-full overflow-hidden mb-8">
             <motion.div 
               initial={{ width: 0 }}
@@ -164,6 +170,22 @@ export default function Register() {
                 </div>
 
                 <div className="space-y-2">
+                  <label className="text-[10px] font-bold text-gray-600 uppercase tracking-[0.3em] ml-4">Email Address</label>
+                  <div className="relative group">
+                    <Layers className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-600 group-focus-within:text-blue-500 transition-colors" />
+                    <input
+                      type="email"
+                      name="email"
+                      required
+                      value={formData.email}
+                      onChange={handleChange}
+                      className="w-full bg-white/5 border border-white/10 rounded-[2rem] py-5 pl-16 pr-8 text-sm font-bold tracking-widest focus:ring-2 focus:ring-blue-500/20 focus:bg-white/10 transition-all outline-none placeholder:text-gray-800"
+                      placeholder="EMAIL@EXAMPLE.COM"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
                   <label className="text-[10px] font-bold text-gray-600 uppercase tracking-[0.3em] ml-4">Access Code</label>
                   <div className="relative group">
                     <Lock className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-600 group-focus-within:text-blue-500 transition-colors" />
@@ -185,9 +207,9 @@ export default function Register() {
                     <Briefcase className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-600 group-focus-within:text-blue-500 transition-colors" />
                     <input
                       type="text"
-                      name="name"
+                      name="fullName"
                       required
-                      value={formData.name}
+                      value={formData.fullName}
                       onChange={handleChange}
                       className="w-full bg-white/5 border border-white/10 rounded-[2rem] py-5 pl-16 pr-8 text-sm font-bold tracking-widest focus:ring-2 focus:ring-blue-500/20 focus:bg-white/10 transition-all outline-none placeholder:text-gray-800"
                       placeholder="JOHN DOE"
@@ -226,17 +248,33 @@ export default function Register() {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-[10px] font-bold text-gray-600 uppercase tracking-[0.3em] ml-4">Contact</label>
+                  <label className="text-[10px] font-bold text-gray-600 uppercase tracking-[0.3em] ml-4">Contact Phone</label>
                   <div className="relative group">
                     <Phone className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-600 group-focus-within:text-blue-500 transition-colors" />
                     <input
                       type="tel"
-                      name="contact"
+                      name="phone"
                       required
-                      value={formData.contact}
+                      value={formData.phone}
                       onChange={handleChange}
                       className="w-full bg-white/5 border border-white/10 rounded-[2rem] py-5 pl-16 pr-8 text-sm font-bold tracking-widest focus:ring-2 focus:ring-blue-500/20 focus:bg-white/10 transition-all outline-none placeholder:text-gray-800"
                       placeholder="+1 (555) 000-0000"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2 md:col-span-2">
+                  <label className="text-[10px] font-bold text-gray-600 uppercase tracking-[0.3em] ml-4">Residential Address</label>
+                  <div className="relative group">
+                    <ArrowRight className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-600 group-focus-within:text-blue-500 transition-colors" />
+                    <input
+                      type="text"
+                      name="address"
+                      required
+                      value={formData.address}
+                      onChange={handleChange}
+                      className="w-full bg-white/5 border border-white/10 rounded-[2rem] py-5 pl-16 pr-8 text-sm font-bold tracking-widest focus:ring-2 focus:ring-blue-500/20 focus:bg-white/10 transition-all outline-none placeholder:text-gray-800"
+                      placeholder="123 MEDICAL ST, HEALTH CITY"
                     />
                   </div>
                 </div>
@@ -289,8 +327,8 @@ export default function Register() {
                       <div className="space-y-2">
                         <label className="text-[10px] font-bold text-gray-600 uppercase tracking-[0.3em] ml-4">Patient Type</label>
                         <select
-                          name="type"
-                          value={formData.type}
+                          name="patientType"
+                          value={formData.patientType}
                           onChange={handleChange}
                           className="w-full bg-white/5 border border-white/10 rounded-[2rem] py-5 px-8 text-sm font-bold tracking-widest focus:ring-2 focus:ring-blue-500/20 focus:bg-white/10 transition-all outline-none appearance-none"
                         >

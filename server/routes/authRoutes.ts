@@ -1,5 +1,20 @@
 import express from 'express';
-import { register, login, getPendingUsers, approveUser, getAllUsers, createUser, updateUser, deleteUser, uploadIdCard, requestAccountAction, handleAccountRequest } from '../controllers/authController';
+import { 
+  register, 
+  login, 
+  getPendingUsers, 
+  approveUser, 
+  getAllUsers, 
+  createUser, 
+  updateUser, 
+  deleteUser, 
+  uploadIdCard, 
+  requestAccountAction, 
+  handleAccountRequest,
+  banUser,
+  rateDoctor,
+  updateProfile
+} from '../controllers/authController';
 import { authenticate, authorize } from '../middleware/auth';
 
 const router = express.Router();
@@ -10,6 +25,8 @@ router.post('/login', login);
 // User Routes
 router.post('/upload-id', authenticate, uploadIdCard);
 router.post('/request-account-action', authenticate, requestAccountAction);
+router.put('/profile', authenticate, updateProfile);
+router.post('/rate-doctor', authenticate, rateDoctor);
 
 // Admin Routes
 router.get('/admin/pending-users', authenticate, authorize(['Admin']), getPendingUsers);
@@ -19,5 +36,6 @@ router.post('/admin/users', authenticate, authorize(['Admin']), createUser);
 router.put('/admin/users/:id', authenticate, authorize(['Admin']), updateUser);
 router.delete('/admin/users/:id', authenticate, authorize(['Admin']), deleteUser);
 router.post('/admin/handle-account-request/:id', authenticate, authorize(['Admin']), handleAccountRequest);
+router.post('/admin/ban-user/:id', authenticate, authorize(['Admin']), banUser);
 
 export default router;
