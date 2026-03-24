@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from './AuthContext';
+import AIChatBot from './AIChatBot';
 import { 
   LayoutDashboard, 
   Users, 
@@ -255,6 +256,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           background: rgba(255,255,255,0.1);
         }
       `}} />
+      <AIChatBot />
     </div>
   );
 }

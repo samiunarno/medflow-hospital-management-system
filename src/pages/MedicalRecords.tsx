@@ -10,9 +10,13 @@ import {
   Clock, 
   ChevronRight,
   Filter,
-  X
+  X,
+  Sparkles,
+  BrainCircuit,
+  Loader2
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { geminiService } from '../services/geminiService';
 
 export default function MedicalRecords() {
   const { token, user } = useAuth();
@@ -30,6 +34,8 @@ export default function MedicalRecords() {
     details: ''
   });
   const [submitting, setSubmitting] = useState(false);
+  const [analyzingId, setAnalyzingId] = useState<string | null>(null);
+  const [analysisResult, setAnalysisResult] = useState<{ id: string, text: string, type: 'fast' | 'deep' } | null>(null);
 
   useEffect(() => {
     fetchRecords();
@@ -101,6 +107,29 @@ export default function MedicalRecords() {
       console.error('Failed to create record');
     } finally {
       setSubmitting(false);
+    }
+  };
+
+  const handleAIAnalysis = async (record: any, type: 'fast' | 'deep') => {
+    setAnalyzingId(`${record.id}-${type}`);
+    try {
+      let result = '';
+      if (type === 'fast') {
+        result = await geminiService.analyzeMedicalRecord(record);
+      } else {
+        const prompt = `Perform a deep clinical analysis of this medical record. Think through the implications, potential underlying conditions, and provide a high-level expert consultation summary:
+        Record Type: ${record.type}
+        Date: ${record.date}
+        Details: ${record.details}
+        Patient: ${record.patient_name}
+        Doctor: ${record.doctor_name}`;
+        result = await geminiService.complexAnalysis(prompt);
+      }
+      setAnalysisResult({ id: record.id, text: result, type });
+    } catch (error) {
+      console.error('AI Analysis error:', error);
+    } finally {
+      setAnalyzingId(null);
     }
   };
 
@@ -325,7 +354,73 @@ export default function MedicalRecords() {
                   <p className="text-gray-400 leading-relaxed whitespace-pre-wrap text-sm">{record.details}</p>
                 </div>
 
-                <div className="mt-6 flex justify-end">
+                {/* AI Analysis Result */}
+                <AnimatePresence>
+                  {analysisResult?.id === record.id && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      exit={{ opacity: 0, height: 0 }}
+                      className="mt-6 overflow-hidden"
+                    >
+                      <div className={`p-6 rounded-2xl border ${
+                        analysisResult.type === 'deep' 
+                          ? 'bg-purple-600/5 border-purple-500/20' 
+                          : 'bg-blue-600/5 border-blue-500/20'
+                      }`}>
+                        <div className="flex items-center gap-2 mb-4">
+                          {analysisResult.type === 'deep' ? (
+                            <BrainCircuit className="w-5 h-5 text-purple-400" />
+                          ) : (
+                            <Sparkles className="w-5 h-5 text-blue-400" />
+                          )}
+                          <h4 className={`text-xs font-bold uppercase tracking-[0.2em] ${
+                            analysisResult.type === 'deep' ? 'text-purple-400' : 'text-blue-400'
+                          }`}>
+                            {analysisResult.type === 'deep' ? 'Deep Clinical Insight' : 'Gemini AI Summary'}
+                          </h4>
+                          <button 
+                            onClick={() => setAnalysisResult(null)}
+                            className="ml-auto text-gray-600 hover:text-white transition-colors"
+                          >
+                            <X className="w-4 h-4" />
+                          </button>
+                        </div>
+                        <p className="text-sm text-gray-300 leading-relaxed whitespace-pre-wrap">
+                          {analysisResult.text}
+                        </p>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                <div className="mt-6 flex flex-wrap items-center justify-between gap-4">
+                  <div className="flex items-center gap-3">
+                    <button 
+                      onClick={() => handleAIAnalysis(record, 'fast')}
+                      disabled={analyzingId === `${record.id}-fast`}
+                      className="flex items-center gap-2 px-4 py-2 bg-blue-600/10 border border-blue-500/20 text-blue-400 rounded-xl text-xs font-bold hover:bg-blue-600 hover:text-white transition-all disabled:opacity-50"
+                    >
+                      {analyzingId === `${record.id}-fast` ? (
+                        <Loader2 className="w-3 h-3 animate-spin" />
+                      ) : (
+                        <Sparkles className="w-3 h-3" />
+                      )}
+                      AI Summary
+                    </button>
+                    <button 
+                      onClick={() => handleAIAnalysis(record, 'deep')}
+                      disabled={analyzingId === `${record.id}-deep`}
+                      className="flex items-center gap-2 px-4 py-2 bg-purple-600/10 border border-purple-500/20 text-purple-400 rounded-xl text-xs font-bold hover:bg-purple-600 hover:text-white transition-all disabled:opacity-50"
+                    >
+                      {analyzingId === `${record.id}-deep` ? (
+                        <Loader2 className="w-3 h-3 animate-spin" />
+                      ) : (
+                        <BrainCircuit className="w-3 h-3" />
+                      )}
+                      Deep Insight
+                    </button>
+                  </div>
                   <button className="flex items-center gap-2 text-blue-400 font-bold hover:text-blue-300 transition-colors text-sm uppercase tracking-widest">
                     View Full Report
                     <ChevronRight className="w-4 h-4" />
