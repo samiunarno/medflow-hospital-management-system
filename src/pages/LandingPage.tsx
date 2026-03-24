@@ -1,5 +1,6 @@
 import React, { useRef } from 'react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../components/AuthContext';
 import { 
   Activity, 
   Shield, 
@@ -29,6 +30,7 @@ import {
 import { motion, useScroll, useTransform, AnimatePresence } from 'motion/react';
 
 export default function LandingPage() {
+  const { user } = useAuth();
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -78,14 +80,27 @@ export default function LandingPage() {
           <a href="#solutions" className="hover:text-blue-500 transition-colors">Solutions</a>
           <a href="#architecture" className="hover:text-blue-500 transition-colors">Architecture</a>
           <a href="#security" className="hover:text-blue-500 transition-colors">Security</a>
-          <Link to="/login" className="hover:text-blue-500 transition-colors">Portal</Link>
+          {user ? (
+            <Link to="/dashboard" className="hover:text-blue-500 transition-colors">Dashboard</Link>
+          ) : (
+            <Link to="/login" className="hover:text-blue-500 transition-colors">Portal</Link>
+          )}
         </div>
-        <Link 
-          to="/register" 
-          className="bg-white text-black px-8 py-3 rounded-full text-[10px] font-bold uppercase tracking-widest hover:bg-blue-500 hover:text-white transition-all duration-500"
-        >
-          Initialize
-        </Link>
+        {user ? (
+          <Link 
+            to="/dashboard" 
+            className="bg-blue-600 text-white px-8 py-3 rounded-full text-[10px] font-bold uppercase tracking-widest hover:bg-blue-700 transition-all duration-500"
+          >
+            Dashboard
+          </Link>
+        ) : (
+          <Link 
+            to="/register" 
+            className="bg-white text-black px-8 py-3 rounded-full text-[10px] font-bold uppercase tracking-widest hover:bg-blue-500 hover:text-white transition-all duration-500"
+          >
+            Initialize
+          </Link>
+        )}
       </nav>
 
       {/* Hero Section - Editorial Style */}
@@ -432,18 +447,29 @@ export default function LandingPage() {
               Join the elite institutions building the future of medical care on MedFlow.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
-              <Link 
-                to="/register" 
-                className="w-full sm:w-auto bg-white text-black px-12 py-6 rounded-full text-xs font-bold uppercase tracking-widest hover:bg-blue-600 hover:text-white transition-all duration-500 shadow-2xl shadow-white/10"
-              >
-                Request Access
-              </Link>
-              <Link 
-                to="/login" 
-                className="w-full sm:w-auto bg-white/5 border border-white/10 text-white px-12 py-6 rounded-full text-xs font-bold uppercase tracking-widest hover:bg-white/10 transition-all duration-500 backdrop-blur-xl"
-              >
-                Portal Login
-              </Link>
+              {user ? (
+                <Link 
+                  to="/dashboard" 
+                  className="w-full sm:w-auto bg-blue-600 text-white px-12 py-6 rounded-full text-xs font-bold uppercase tracking-widest hover:bg-blue-700 transition-all duration-500 shadow-2xl shadow-blue-500/20"
+                >
+                  Go to Dashboard
+                </Link>
+              ) : (
+                <>
+                  <Link 
+                    to="/register" 
+                    className="w-full sm:w-auto bg-white text-black px-12 py-6 rounded-full text-xs font-bold uppercase tracking-widest hover:bg-blue-600 hover:text-white transition-all duration-500 shadow-2xl shadow-white/10"
+                  >
+                    Request Access
+                  </Link>
+                  <Link 
+                    to="/login" 
+                    className="w-full sm:w-auto bg-white/5 border border-white/10 text-white px-12 py-6 rounded-full text-xs font-bold uppercase tracking-widest hover:bg-white/10 transition-all duration-500 backdrop-blur-xl"
+                  >
+                    Portal Login
+                  </Link>
+                </>
+              )}
             </div>
           </motion.div>
         </div>

@@ -64,9 +64,9 @@ export default function Wards() {
       {/* Stats Summary */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         <StatCard title="Total Beds" value={stats.total} icon={Bed} color="blue" />
-        <StatCard title="Available" value={stats.available} icon={CheckCircle} color="green" />
-        <StatCard title="Occupied" value={stats.occupied} icon={Clock} color="orange" />
-        <StatCard title="Maintenance" value={stats.maintenance} icon={AlertCircle} color="red" />
+        <StatCard title="Available" value={stats.available} icon={CheckCircle} color="emerald" />
+        <StatCard title="Occupied" value={stats.occupied} icon={Clock} color="sky" />
+        <StatCard title="Maintenance" value={stats.maintenance} icon={AlertCircle} color="rose" />
       </div>
 
       {/* Filters */}
@@ -79,7 +79,10 @@ export default function Wards() {
               onClick={() => setFilter(s)}
               className={`px-4 py-2 rounded-xl text-sm font-bold transition-all ${
                 filter === s 
-                  ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/20' 
+                  ? s === 'Available' ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-500/20' :
+                    s === 'Occupied' ? 'bg-sky-600 text-white shadow-lg shadow-sky-500/20' :
+                    s === 'Maintenance' ? 'bg-rose-600 text-white shadow-lg shadow-rose-500/20' :
+                    'bg-blue-600 text-white shadow-lg shadow-blue-500/20'
                   : 'bg-white/5 text-gray-500 hover:bg-white/10 hover:text-white border border-white/5'
               }`}
             >
@@ -101,16 +104,16 @@ export default function Wards() {
               key={bed.id}
               whileHover={{ scale: 1.02 }}
               className={`p-6 rounded-3xl border transition-all ${
-                bed.status === 'Available' ? 'bg-white/2 border-white/5' :
-                bed.status === 'Occupied' ? 'bg-blue-600/10 border-blue-500/20' :
-                'bg-red-600/10 border-red-500/20'
+                bed.status === 'Available' ? 'bg-emerald-500/5 border-emerald-500/20 shadow-lg shadow-emerald-500/5' :
+                bed.status === 'Occupied' ? 'bg-sky-500/5 border-sky-500/20 shadow-lg shadow-sky-500/5' :
+                'bg-rose-500/5 border-rose-500/20 shadow-lg shadow-rose-500/5'
               }`}
             >
               <div className="flex items-center justify-between mb-4">
                 <div className={`p-3 rounded-2xl ${
-                  bed.status === 'Available' ? 'bg-green-600/10 text-green-400 border border-green-500/20' :
-                  bed.status === 'Occupied' ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/20' :
-                  'bg-red-600/10 text-red-400 border border-red-500/20'
+                  bed.status === 'Available' ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/20' :
+                  bed.status === 'Occupied' ? 'bg-sky-500 text-white shadow-lg shadow-sky-500/20' :
+                  'bg-rose-500 text-white shadow-lg shadow-rose-500/20'
                 }`}>
                   <Bed className="w-6 h-6" />
                 </div>
@@ -119,32 +122,32 @@ export default function Wards() {
 
               <h3 className="font-bold text-white mb-1 truncate">{bed.ward_id?.name || 'General'} Ward</h3>
               <p className={`text-[10px] font-bold uppercase tracking-widest mb-4 ${
-                bed.status === 'Available' ? 'text-green-400' :
-                bed.status === 'Occupied' ? 'text-blue-400' :
-                'text-red-400'
+                bed.status === 'Available' ? 'text-emerald-400' :
+                bed.status === 'Occupied' ? 'text-sky-400' :
+                'text-rose-400'
               }`}>
                 {bed.status}
               </p>
 
               {bed.status === 'Occupied' ? (
-                <div className="pt-4 border-t border-blue-500/20">
-                  <div className="flex items-center gap-2 text-blue-400 mb-2">
+                <div className="pt-4 border-t border-sky-500/20">
+                  <div className="flex items-center gap-2 text-sky-400 mb-2">
                     <User className="w-4 h-4" />
                     <span className="text-xs font-bold truncate">{bed.patient_id?.name || 'Unknown Patient'}</span>
                   </div>
-                  <button className="w-full py-2 bg-white/5 text-blue-400 rounded-xl text-xs font-bold hover:bg-blue-600 hover:text-white transition-all border border-blue-500/20">
+                  <button className="w-full py-2 bg-white/5 text-sky-400 rounded-xl text-xs font-bold hover:bg-sky-600 hover:text-white transition-all border border-sky-500/20">
                     View Patient
                   </button>
                 </div>
               ) : bed.status === 'Available' ? (
-                <div className="pt-4 border-t border-white/5">
-                  <button className="w-full py-2 bg-blue-600 text-white rounded-xl text-xs font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-500/20">
+                <div className="pt-4 border-t border-emerald-500/20">
+                  <button className="w-full py-2 bg-emerald-600 text-white rounded-xl text-xs font-bold hover:bg-emerald-700 transition-all shadow-lg shadow-emerald-500/20">
                     Assign Patient
                   </button>
                 </div>
               ) : (
-                <div className="pt-4 border-t border-red-500/20">
-                  <p className="text-[10px] text-red-500 font-bold uppercase tracking-tight">Scheduled for maintenance</p>
+                <div className="pt-4 border-t border-rose-500/20">
+                  <p className="text-[10px] text-rose-500 font-bold uppercase tracking-tight">Scheduled for maintenance</p>
                 </div>
               )}
             </motion.div>
@@ -158,9 +161,9 @@ export default function Wards() {
 function StatCard({ title, value, icon: Icon, color }: any) {
   const colors: any = {
     blue: 'bg-blue-600/10 text-blue-400 border-blue-500/20',
-    green: 'bg-green-600/10 text-green-400 border-green-500/20',
-    orange: 'bg-orange-600/10 text-orange-400 border-orange-500/20',
-    red: 'bg-red-600/10 text-red-400 border-red-500/20',
+    emerald: 'bg-emerald-600/10 text-emerald-400 border-emerald-500/20',
+    sky: 'bg-sky-600/10 text-sky-400 border-sky-500/20',
+    rose: 'bg-rose-600/10 text-rose-400 border-rose-500/20',
   };
 
   return (
