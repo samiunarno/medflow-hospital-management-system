@@ -1,6 +1,7 @@
 import React, { useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../components/AuthContext';
+import { useTranslation } from 'react-i18next';
 import { 
   Activity, 
   Shield, 
@@ -31,6 +32,7 @@ import { motion, useScroll, useTransform, AnimatePresence } from 'motion/react';
 
 export default function LandingPage() {
   const { user } = useAuth();
+  const { t } = useTranslation();
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -74,16 +76,16 @@ export default function LandingPage() {
           <div className="w-8 h-8 lg:w-10 lg:h-10 bg-white rounded-full flex items-center justify-center text-black group-hover:rotate-12 transition-transform duration-500">
             <Activity className="w-4 h-4 lg:w-6 lg:h-6" />
           </div>
-          <span className="text-lg lg:text-2xl font-display font-bold tracking-tighter uppercase">MedFlow</span>
+          <span className="text-lg lg:text-2xl font-display font-bold tracking-tighter uppercase">{t('app_name')}</span>
         </Link>
         <div className="hidden lg:flex items-center gap-12 text-[10px] font-bold uppercase tracking-[0.3em]">
           <a href="#solutions" className="hover:text-blue-500 transition-colors">Solutions</a>
           <a href="#architecture" className="hover:text-blue-500 transition-colors">Architecture</a>
           <a href="#security" className="hover:text-blue-500 transition-colors">Security</a>
           {user ? (
-            <Link to="/dashboard" className="hover:text-blue-500 transition-colors">Dashboard</Link>
+            <Link to="/dashboard" className="hover:text-blue-500 transition-colors">{t('dashboard')}</Link>
           ) : (
-            <Link to="/login" className="hover:text-blue-500 transition-colors">Portal</Link>
+            <Link to="/login" className="hover:text-blue-500 transition-colors">{t('portal_login')}</Link>
           )}
         </div>
         {user ? (
@@ -91,14 +93,14 @@ export default function LandingPage() {
             to="/dashboard" 
             className="bg-blue-600 text-white px-8 py-3 rounded-full text-[10px] font-bold uppercase tracking-widest hover:bg-blue-700 transition-all duration-500"
           >
-            Dashboard
+            {t('dashboard')}
           </Link>
         ) : (
           <Link 
             to="/register" 
             className="bg-white text-black px-8 py-3 rounded-full text-[10px] font-bold uppercase tracking-widest hover:bg-blue-500 hover:text-white transition-all duration-500"
           >
-            Initialize
+            {t('initialize')}
           </Link>
         )}
       </nav>
@@ -113,7 +115,7 @@ export default function LandingPage() {
           >
             <motion.div variants={itemVariants} className="inline-flex items-center gap-3 px-4 py-2 bg-white/5 border border-white/10 rounded-full text-[8px] sm:text-[10px] font-bold uppercase tracking-widest mb-8 lg:mb-12 backdrop-blur-xl">
               <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" />
-              System Status: Operational
+              {t('system_status')}
             </motion.div>
             
             <motion.h1 variants={itemVariants} className="text-[12vw] sm:text-[12vw] lg:text-[14vw] font-display font-black leading-[0.85] tracking-tighter uppercase mb-8 lg:mb-12 break-words">
@@ -489,7 +491,7 @@ export default function LandingPage() {
               <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center text-black">
                 <Activity className="w-5 h-5" />
               </div>
-              <span className="text-xl font-display font-bold tracking-tighter uppercase">MedFlow</span>
+              <span className="text-xl font-display font-bold tracking-tighter uppercase">{t('app_name')}</span>
             </div>
             <p className="text-gray-500 max-w-sm text-[10px] font-bold uppercase tracking-widest leading-relaxed mb-12">
               The definitive operating system for modern healthcare. Built for precision, security, and the human experience.

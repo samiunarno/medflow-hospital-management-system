@@ -1,7 +1,8 @@
 import React from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from './AuthContext';
-import AIChatBot from './AIChatBot';
+import AIDoctor from './AIDoctor';
+import { useTranslation } from 'react-i18next';
 import { 
   LayoutDashboard, 
   Users, 
@@ -20,16 +21,20 @@ import {
   ChevronRight,
   Command,
   HelpCircle,
-  Zap
+  Zap,
+  Globe,
+  Video
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const { user, logout } = useAuth();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(window.innerWidth > 1024);
   const [isNotificationsOpen, setIsNotificationsOpen] = React.useState(false);
+  const [isLanguageOpen, setIsLanguageOpen] = React.useState(false);
   const [searchQuery, setSearchQuery] = React.useState('');
   const [notifications, setNotifications] = React.useState([
     { id: 1, title: 'System Update', message: 'MedFlow v2.4 is now live with enhanced telemetry.', time: '2m ago', read: false },
@@ -61,15 +66,16 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   };
 
   const navItems = [
-    { label: 'Dashboard', icon: LayoutDashboard, path: '/dashboard', roles: ['Admin', 'Doctor', 'Patient', 'Staff'] },
-    { label: 'Patients', icon: Users, path: '/patients', roles: ['Admin', 'Doctor', 'Staff'] },
-    { label: 'Doctors', icon: UserRound, path: '/doctors', roles: ['Admin', 'Staff'] },
-    { label: 'Wards & Beds', icon: Bed, path: '/wards', roles: ['Admin', 'Staff'] },
-    { label: 'Pharmacy', icon: Pill, path: '/pharmacy', roles: ['Admin', 'Staff', 'Doctor'] },
-    { label: 'Medical Records', icon: FileText, path: '/records', roles: ['Admin', 'Doctor', 'Patient'] },
-    { label: 'Analytics', icon: BarChart3, path: '/analytics', roles: ['Admin'] },
-    { label: 'Users', icon: Users, path: '/users', roles: ['Admin'] },
-    { label: 'Settings', icon: Settings, path: '/settings', roles: ['Admin', 'Doctor', 'Patient', 'Staff'] },
+    { label: t('dashboard'), icon: LayoutDashboard, path: '/dashboard', roles: ['Admin', 'Doctor', 'Patient', 'Staff'] },
+    { label: t('patients'), icon: Users, path: '/patients', roles: ['Admin', 'Doctor', 'Staff'] },
+    { label: t('doctors'), icon: UserRound, path: '/doctors', roles: ['Admin', 'Staff'] },
+    { label: t('wards'), icon: Bed, path: '/wards', roles: ['Admin', 'Staff'] },
+    { label: t('pharmacy'), icon: Pill, path: '/pharmacy', roles: ['Admin', 'Staff', 'Doctor'] },
+    { label: t('records'), icon: FileText, path: '/records', roles: ['Admin', 'Doctor', 'Patient'] },
+    { label: t('video_call'), icon: Video, path: '/video-conference', roles: ['Admin', 'Doctor', 'Patient', 'Staff'] },
+    { label: t('analytics'), icon: BarChart3, path: '/analytics', roles: ['Admin'] },
+    { label: t('users'), icon: Users, path: '/users', roles: ['Admin'] },
+    { label: t('settings'), icon: Settings, path: '/settings', roles: ['Admin', 'Doctor', 'Patient', 'Staff'] },
   ];
 
   const filteredNavItems = navItems.filter(item => user && item.roles.includes(user.role));
@@ -103,13 +109,13 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center text-black shadow-2xl shadow-white/10 group-hover:rotate-12 transition-transform duration-500">
                   <Activity className="w-6 h-6" />
                 </div>
-                <span className="text-2xl font-display font-bold tracking-tighter uppercase">MedFlow</span>
+                <span className="text-2xl font-display font-bold tracking-tighter uppercase">{t('app_name')}</span>
               </Link>
             </div>
 
             <nav className="flex-1 px-6 space-y-3 overflow-y-auto custom-scrollbar pt-4">
               <div className="px-4 mb-6">
-                <p className="text-[10px] font-bold text-gray-600 uppercase tracking-[0.4em]">Navigation</p>
+                <p className="text-[10px] font-bold text-gray-600 uppercase tracking-[0.4em]">{t('language')}</p>
               </div>
               {filteredNavItems.map((item) => {
                 const isActive = location.pathname === item.path || (item.path === '/dashboard' && location.pathname === '/');
@@ -185,7 +191,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                     className="w-full flex items-center justify-center gap-3 py-4 bg-white/5 text-red-500 rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-red-500 hover:text-white transition-all duration-500 border border-white/5"
                   >
                     <LogOut className="w-4 h-4" />
-                    Terminate Session
+                    {t('logout')}
                   </button>
                 </div>
                 <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-blue-600/20 rounded-full blur-3xl opacity-50 group-hover:scale-150 transition-transform duration-700" />
@@ -242,6 +248,59 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                   <span className="absolute top-3 right-3 w-2 h-2 bg-blue-500 rounded-full shadow-[0_0_10px_rgba(59,130,246,0.8)]" />
                 )}
               </button>
+
+              <div className="relative">
+                <button 
+                  onClick={() => setIsLanguageOpen(!isLanguageOpen)}
+                  className={`w-12 h-12 flex items-center justify-center rounded-2xl text-white relative transition-all duration-500 border border-white/5 ${isLanguageOpen ? 'bg-white/10' : 'bg-white/5 hover:bg-white/10'}`}
+                >
+                  <Globe className="w-5 h-5" />
+                </button>
+
+                <AnimatePresence>
+                  {isLanguageOpen && (
+                    <>
+                      <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        onClick={() => setIsLanguageOpen(false)}
+                        className="fixed inset-0 z-40"
+                      />
+                      <motion.div
+                        initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                        className="absolute top-16 right-0 w-48 bg-black/80 backdrop-blur-2xl border border-white/10 rounded-3xl shadow-2xl z-50 overflow-hidden"
+                      >
+                        <div className="p-4 border-b border-white/5">
+                          <h3 className="text-[10px] font-bold uppercase tracking-widest text-gray-500">{t('language')}</h3>
+                        </div>
+                        <div className="p-2">
+                          {[
+                            { code: 'en', label: 'English' },
+                            { code: 'bn', label: 'বাংলা' },
+                            { code: 'zh', label: '中文' }
+                          ].map((lang) => (
+                            <button
+                              key={lang.code}
+                              onClick={() => {
+                                i18n.changeLanguage(lang.code);
+                                setIsLanguageOpen(false);
+                              }}
+                              className={`w-full text-left px-4 py-3 rounded-xl text-xs font-bold uppercase tracking-widest transition-colors ${
+                                i18n.language === lang.code ? 'bg-blue-600 text-white' : 'text-gray-400 hover:bg-white/5 hover:text-white'
+                              }`}
+                            >
+                              {lang.label}
+                            </button>
+                          ))}
+                        </div>
+                      </motion.div>
+                    </>
+                  )}
+                </AnimatePresence>
+              </div>
 
               <AnimatePresence>
                 {isNotificationsOpen && (
@@ -339,7 +398,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           background: rgba(255,255,255,0.1);
         }
       `}} />
-      <AIChatBot />
+      <AIDoctor />
     </div>
   );
 }

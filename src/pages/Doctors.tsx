@@ -9,15 +9,21 @@ import {
   Mail, 
   Hospital,
   ChevronRight,
-  MoreVertical
+  MoreVertical,
+  MessageSquare
 } from 'lucide-react';
 import { motion } from 'motion/react';
+import ChatModal from '../components/ChatModal';
+import { useTranslation } from 'react-i18next';
 
 export default function Doctors() {
   const { token, user } = useAuth();
+  const { t } = useTranslation();
   const [doctors, setDoctors] = useState<any[]>([]);
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
+  const [selectedDoctor, setSelectedDoctor] = useState<any>(null);
+  const [isChatOpen, setIsChatOpen] = useState(false);
 
   useEffect(() => {
     fetchDoctors();
@@ -47,7 +53,7 @@ export default function Doctors() {
     <div className="space-y-8">
       <header className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-display font-bold text-white">Doctors</h1>
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-display font-bold text-white">{t('doctors')}</h1>
           <p className="text-gray-500 font-medium">Manage medical staff and specializations.</p>
         </div>
         {user?.role === 'Admin' && (
@@ -130,14 +136,33 @@ export default function Doctors() {
                 <button className="flex-1 flex items-center justify-center gap-2 py-3 bg-blue-600 text-white rounded-2xl font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-500/20">
                   View Profile
                 </button>
-                <button className="p-3 bg-white/5 text-gray-500 rounded-2xl hover:bg-white/10 hover:text-white transition-all border border-white/5">
-                  <ChevronRight className="w-5 h-5" />
+                <button 
+                  onClick={() => {
+                    // For now, we assume the doctor has a user account with the same name or we'd need a mapping
+                    // In a real app, we'd have doctor.user_id
+                    // For demo, we'll just use a placeholder or the doctor's name to find a user
+                    setSelectedDoctor(doctor);
+                    setIsChatOpen(true);
+                  }}
+                  className="p-3 bg-white/5 text-gray-500 rounded-2xl hover:bg-white/10 hover:text-white transition-all border border-white/5 flex items-center gap-2"
+                >
+                  <MessageSquare className="w-5 h-5" />
+                  <span className="text-[10px] font-bold uppercase tracking-widest hidden lg:block">{t('contact_doctor')}</span>
                 </button>
               </div>
             </motion.div>
           ))
         )}
       </div>
+
+      {selectedDoctor && (
+        <ChatModal
+          isOpen={isChatOpen}
+          onClose={() => setIsChatOpen(false)}
+          receiverId={selectedDoctor.user_id || selectedDoctor._id} // Fallback to doctor ID if user_id not present
+          receiverName={selectedDoctor.name}
+        />
+      )}
     </div>
   );
 }

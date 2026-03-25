@@ -9,17 +9,23 @@ import {
   Calendar, 
   FileText,
   Filter,
-  ChevronRight
+  ChevronRight,
+  MessageSquare
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import ChatModal from '../components/ChatModal';
+import { useTranslation } from 'react-i18next';
 
 export default function Patients() {
   const { token, user } = useAuth();
+  const { t } = useTranslation();
   const [patients, setPatients] = useState<any[]>([]);
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedPatient, setSelectedPatient] = useState<any>(null);
+  const [isChatOpen, setIsChatOpen] = useState(false);
+  const [chatReceiver, setChatReceiver] = useState<any>(null);
 
   useEffect(() => {
     fetchPatients();
@@ -48,7 +54,7 @@ export default function Patients() {
     <div className="space-y-8">
       <header className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-display font-bold text-white">Patients</h1>
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-display font-bold text-white">{t('patients')}</h1>
           <p className="text-gray-500 font-medium">Manage and view all patient records.</p>
         </div>
         {(user?.role === 'Admin' || user?.role === 'Staff') && (
@@ -146,14 +152,30 @@ export default function Patients() {
                   <FileText className="w-4 h-4" />
                   Records
                 </button>
-                <button className="p-3 bg-white/5 text-gray-500 rounded-2xl hover:bg-white/10 hover:text-white transition-all border border-white/5">
-                  <ChevronRight className="w-5 h-5" />
+                <button 
+                  onClick={() => {
+                    setChatReceiver(patient);
+                    setIsChatOpen(true);
+                  }}
+                  className="p-3 bg-white/5 text-gray-500 rounded-2xl hover:bg-white/10 hover:text-white transition-all border border-white/5 flex items-center gap-2"
+                >
+                  <MessageSquare className="w-5 h-5" />
+                  <span className="text-[10px] font-bold uppercase tracking-widest hidden lg:block">{t('contact_patient')}</span>
                 </button>
               </div>
             </motion.div>
           ))
         )}
       </div>
+
+      {chatReceiver && (
+        <ChatModal
+          isOpen={isChatOpen}
+          onClose={() => setIsChatOpen(false)}
+          receiverId={chatReceiver.user_id || chatReceiver._id}
+          receiverName={chatReceiver.name}
+        />
+      )}
     </div>
   );
 }

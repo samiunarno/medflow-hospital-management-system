@@ -15,6 +15,7 @@ import MedicalRecords from './pages/MedicalRecords';
 import UserManagement from './pages/UserManagement';
 import Settings from './pages/Settings';
 import Search from './pages/Search';
+import VideoConference from './pages/VideoConference';
 
 function PrivateRoute({ children, roles }: { children: React.ReactNode; roles?: string[] }) {
   const { user, loading } = useAuth();
@@ -45,6 +46,7 @@ export default function App() {
           <Route path="/users" element={<PrivateRoute roles={['Admin']}><UserManagement /></PrivateRoute>} />
           <Route path="/settings" element={<PrivateRoute><Settings /></PrivateRoute>} />
           <Route path="/search" element={<PrivateRoute><Search /></PrivateRoute>} />
+          <Route path="/video-conference" element={<PrivateRoute><VideoConference /></PrivateRoute>} />
           
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
