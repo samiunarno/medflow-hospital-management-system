@@ -29,6 +29,7 @@ import { useAuth } from '../AuthContext';
 export default function PatientDashboard({ user }: any) {
   const { token } = useAuth();
   const [doctors, setDoctors] = React.useState<any[]>([]);
+  const [patientData, setPatientData] = React.useState<any>(null);
   const [searchTerm, setSearchTerm] = React.useState('');
   const [loadingDoctors, setLoadingDoctors] = React.useState(false);
   const [ratingDoctor, setRatingDoctor] = React.useState<any>(null);
@@ -38,17 +39,32 @@ export default function PatientDashboard({ user }: any) {
 
   React.useEffect(() => {
     fetchDoctors();
+    fetchPatientData();
   }, []);
+
+  const fetchPatientData = async () => {
+    try {
+      const res = await fetch('/api/patients/me', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setPatientData(data);
+      }
+    } catch (err) {
+      console.error('Failed to fetch patient data:', err);
+    }
+  };
 
   const fetchDoctors = async () => {
     setLoadingDoctors(true);
     try {
-      const res = await fetch('/api/admin/users', {
+      const res = await fetch('/api/doctors/approved', {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();
       if (res.ok) {
-        setDoctors(data.filter((u: any) => u.role === 'Doctor' && u.status === 'Approved' && !u.isBanned));
+        setDoctors(data);
       }
     } catch (err) {
       console.error('Failed to fetch doctors:', err);
@@ -154,10 +170,10 @@ export default function PatientDashboard({ user }: any) {
 
       {/* Health Vitals */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        <VitalCard icon={Heart} label="Heart Rate" value="72 bpm" status="Normal" color="red" />
-        <VitalCard icon={Thermometer} label="Body Temp" value="36.6 °C" status="Normal" color="orange" />
-        <VitalCard icon={Droplets} label="Blood Pressure" value="120/80" status="Normal" color="blue" />
-        <VitalCard icon={Wind} label="Oxygen Level" value="98%" status="Normal" color="green" />
+        <VitalCard icon={Heart} label="Heart Rate" value={patientData?.vitals?.heartRate || "72 bpm"} status={patientData?.vitals?.status || "Normal"} color="red" />
+        <VitalCard icon={Thermometer} label="Body Temp" value={patientData?.vitals?.bodyTemp || "36.6 °C"} status={patientData?.vitals?.status || "Normal"} color="orange" />
+        <VitalCard icon={Droplets} label="Blood Pressure" value={patientData?.vitals?.bloodPressure || "120/80"} status={patientData?.vitals?.status || "Normal"} color="blue" />
+        <VitalCard icon={Wind} label="Oxygen Level" value={patientData?.vitals?.oxygenLevel || "98%"} status={patientData?.vitals?.status || "Normal"} color="green" />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -174,27 +190,42 @@ export default function PatientDashboard({ user }: any) {
             <button className="text-xs font-bold text-indigo-600 hover:underline underline-offset-4 text-left">View All</button>
           </div>
           <div className="divide-y divide-white/5">
-            <PrescriptionItem 
-              medicine="Amoxicillin" 
-              dosage="500mg, 3x daily" 
-              duration="7 days" 
-              status="In Progress" 
-              color="blue"
-            />
-            <PrescriptionItem 
-              medicine="Paracetamol" 
-              dosage="1000mg, as needed" 
-              duration="3 days" 
-              status="Completed" 
-              color="green"
-            />
-            <PrescriptionItem 
-              medicine="Vitamin D3" 
-              dosage="2000IU, 1x daily" 
-              duration="30 days" 
-              status="In Progress" 
-              color="blue"
-            />
+            {patientData?.prescriptions?.length > 0 ? (
+              patientData.prescriptions.map((p: any, i: number) => (
+                <PrescriptionItem 
+                  key={i}
+                  medicine={p.medicine} 
+                  dosage={p.dosage} 
+                  duration={p.duration} 
+                  status={p.status} 
+                  color={p.color}
+                />
+              ))
+            ) : (
+              <>
+                <PrescriptionItem 
+                  medicine="Amoxicillin" 
+                  dosage="500mg, 3x daily" 
+                  duration="7 days" 
+                  status="In Progress" 
+                  color="blue"
+                />
+                <PrescriptionItem 
+                  medicine="Paracetamol" 
+                  dosage="1000mg, as needed" 
+                  duration="3 days" 
+                  status="Completed" 
+                  color="green"
+                />
+                <PrescriptionItem 
+                  medicine="Vitamin D3" 
+                  dosage="2000IU, 1x daily" 
+                  duration="30 days" 
+                  status="In Progress" 
+                  color="blue"
+                />
+              </>
+            )}
           </div>
           <div className="p-8 mt-auto bg-white/2 text-center">
             <button className="text-sm font-bold text-gray-500 hover:text-white transition-colors flex items-center gap-2 mx-auto">
@@ -213,23 +244,43 @@ export default function PatientDashboard({ user }: any) {
             </div>
           </div>
           <div className="space-y-6">
-            <div className="p-6 lg:p-8 bg-indigo-900/20 border border-indigo-500/20 rounded-[2rem] text-white relative overflow-hidden group/card backdrop-blur-sm">
-              <div className="relative z-10">
-                <p className="text-[10px] font-bold text-indigo-400 uppercase tracking-widest mb-4">Tomorrow, 10:00 AM</p>
-                <p className="text-xl lg:text-2xl font-display font-bold mb-1">Dr. Sarah Chen</p>
-                <p className="text-sm text-indigo-200/70 mb-8 font-medium">Cardiology Follow-up</p>
-                <button className="w-full py-4 bg-white text-indigo-900 rounded-2xl font-bold text-sm shadow-xl hover:bg-indigo-50 transition-all">
-                  Reschedule
-                </button>
-              </div>
-              <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-indigo-500/10 rounded-full blur-2xl group-hover/card:scale-150 transition-transform duration-700" />
-            </div>
-            
-            <div className="p-6 lg:p-8 bg-white/5 rounded-[2rem] border border-white/5 group/card cursor-pointer hover:bg-white/10 transition-all">
-              <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-4">March 28, 02:30 PM</p>
-              <p className="text-lg lg:text-xl font-display font-bold text-white mb-1">Dr. James Wilson</p>
-              <p className="text-sm text-gray-500 font-medium">General Checkup</p>
-            </div>
+            {patientData?.appointments?.length > 0 ? (
+              patientData.appointments.map((a: any, i: number) => (
+                <div key={i} className={`p-6 lg:p-8 ${i === 0 ? 'bg-indigo-900/20 border-indigo-500/20' : 'bg-white/5 border-white/5'} border rounded-[2rem] text-white relative overflow-hidden group/card backdrop-blur-sm`}>
+                  <div className="relative z-10">
+                    <p className={`text-[10px] font-bold ${i === 0 ? 'text-indigo-400' : 'text-gray-500'} uppercase tracking-widest mb-4`}>{a.time}</p>
+                    <p className="text-xl lg:text-2xl font-display font-bold mb-1">{a.doctorName}</p>
+                    <p className={`text-sm ${i === 0 ? 'text-indigo-200/70' : 'text-gray-500'} mb-8 font-medium`}>{a.type}</p>
+                    {i === 0 && (
+                      <button className="w-full py-4 bg-white text-indigo-900 rounded-2xl font-bold text-sm shadow-xl hover:bg-indigo-50 transition-all">
+                        Reschedule
+                      </button>
+                    )}
+                  </div>
+                  <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-indigo-500/10 rounded-full blur-2xl group-hover/card:scale-150 transition-transform duration-700" />
+                </div>
+              ))
+            ) : (
+              <>
+                <div className="p-6 lg:p-8 bg-indigo-900/20 border border-indigo-500/20 rounded-[2rem] text-white relative overflow-hidden group/card backdrop-blur-sm">
+                  <div className="relative z-10">
+                    <p className="text-[10px] font-bold text-indigo-400 uppercase tracking-widest mb-4">Tomorrow, 10:00 AM</p>
+                    <p className="text-xl lg:text-2xl font-display font-bold mb-1">Dr. Sarah Chen</p>
+                    <p className="text-sm text-indigo-200/70 mb-8 font-medium">Cardiology Follow-up</p>
+                    <button className="w-full py-4 bg-white text-indigo-900 rounded-2xl font-bold text-sm shadow-xl hover:bg-indigo-50 transition-all">
+                      Reschedule
+                    </button>
+                  </div>
+                  <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-indigo-500/10 rounded-full blur-2xl group-hover/card:scale-150 transition-transform duration-700" />
+                </div>
+                
+                <div className="p-6 lg:p-8 bg-white/5 rounded-[2rem] border border-white/5 group/card cursor-pointer hover:bg-white/10 transition-all">
+                  <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-4">March 28, 02:30 PM</p>
+                  <p className="text-lg lg:text-xl font-display font-bold text-white mb-1">Dr. James Wilson</p>
+                  <p className="text-sm text-gray-500 font-medium">General Checkup</p>
+                </div>
+              </>
+            )}
           </div>
           <button className="mt-8 w-full py-4 border-2 border-dashed border-white/5 rounded-2xl text-sm font-bold text-gray-600 hover:border-indigo-500/20 hover:text-indigo-400 transition-all flex items-center justify-center gap-2">
             <Plus className="w-4 h-4" />

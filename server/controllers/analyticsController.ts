@@ -9,8 +9,10 @@ export const getStats = async (req: Request, res: Response) => {
   try {
     const totalPatients = await User.countDocuments({ role: 'Patient' });
     const totalDoctors = await User.countDocuments({ role: 'Doctor' });
+    const totalStaff = await User.countDocuments({ role: 'Staff' });
     const totalBeds = await Bed.countDocuments();
     const occupiedBeds = await Bed.countDocuments({ status: 'Occupied' });
+    const maintenanceBeds = await Bed.countDocuments({ status: 'Maintenance' });
     const totalDepartments = await Department.countDocuments();
     const totalMedicines = await Medicine.countDocuments();
     
@@ -19,16 +21,18 @@ export const getStats = async (req: Request, res: Response) => {
 
     const bedStatus = [
       { status: 'Occupied', count: occupiedBeds || 42 },
-      { status: 'Available', count: (totalBeds - occupiedBeds) || 58 },
-      { status: 'Maintenance', count: 0 }
+      { status: 'Available', count: (totalBeds - occupiedBeds - maintenanceBeds) || 58 },
+      { status: 'Maintenance', count: maintenanceBeds || 0 }
     ];
 
     res.json({
       // For AdminDashboard
       totalPatients,
       totalDoctors,
+      totalStaff,
       totalBeds: totalBeds || 100,
       occupiedBeds: occupiedBeds || 42,
+      maintenanceBeds: maintenanceBeds || 0,
       totalDepartments: totalDepartments || 8,
       bedOccupancy: totalBeds > 0 ? Math.round((occupiedBeds / totalBeds) * 100) : 42,
       

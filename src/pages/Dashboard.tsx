@@ -13,7 +13,7 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (user?.role === 'Admin') {
+    if (user?.role === 'Admin' || user?.role === 'Staff') {
       fetchAdminData();
     } else {
       setLoading(false);
@@ -22,15 +22,20 @@ export default function Dashboard() {
 
   const fetchAdminData = async () => {
     try {
-      const [statsRes, trendsRes, pendingRes] = await Promise.all([
+      const promises: any[] = [
         fetch('/api/analytics/stats', { headers: { Authorization: `Bearer ${token}` } }),
-        fetch('/api/analytics/inpatient-trends', { headers: { Authorization: `Bearer ${token}` } }),
-        fetch('/api/admin/pending-users', { headers: { Authorization: `Bearer ${token}` } })
-      ]);
+        fetch('/api/analytics/inpatient-trends', { headers: { Authorization: `Bearer ${token}` } })
+      ];
 
-      if (statsRes.ok) setStats(await statsRes.json());
-      if (trendsRes.ok) setTrends(await trendsRes.json());
-      if (pendingRes.ok) setPendingUsers(await pendingRes.json());
+      if (user?.role === 'Admin') {
+        promises.push(fetch('/api/admin/pending-users', { headers: { Authorization: `Bearer ${token}` } }));
+      }
+
+      const results = await Promise.all(promises);
+      
+      if (results[0].ok) setStats(await results[0].json());
+      if (results[1].ok) setTrends(await results[1].json());
+      if (user?.role === 'Admin' && results[2]?.ok) setPendingUsers(await results[2].json());
     } catch (error) {
       console.error('Error fetching admin data:', error);
     } finally {

@@ -11,6 +11,26 @@ const patientSchema = new mongoose.Schema({
   admission_date: { type: Date },
   discharge_date: { type: Date },
   department_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Department' },
+  vitals: {
+    heartRate: { type: String, default: '72 bpm' },
+    bodyTemp: { type: String, default: '36.6 °C' },
+    bloodPressure: { type: String, default: '120/80' },
+    oxygenLevel: { type: String, default: '98%' },
+    status: { type: String, default: 'Normal' }
+  },
+  prescriptions: [{
+    medicine: String,
+    dosage: String,
+    duration: String,
+    status: String,
+    color: String
+  }],
+  appointments: [{
+    doctorName: String,
+    time: String,
+    type: String,
+    status: String
+  }],
   createdAt: { type: Date, default: Date.now }
 });
 

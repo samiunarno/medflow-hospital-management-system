@@ -72,7 +72,7 @@ export default function StaffDashboard({ user, stats }: any) {
               </div>
               <span className="text-[10px] font-bold text-emerald-300">Active</span>
             </div>
-            <p className="text-2xl font-display font-bold text-white mb-1">124</p>
+            <p className="text-2xl font-display font-bold text-white mb-1">{stats?.totalStaff || 0}</p>
             <p className="text-[10px] font-bold text-emerald-200 uppercase tracking-widest">Total Staff</p>
           </motion.div>
         </div>
@@ -93,21 +93,21 @@ export default function StaffDashboard({ user, stats }: any) {
                 <div className="w-3 h-3 rounded-full bg-emerald-500 animate-pulse" />
                 <span className="text-sm font-bold text-emerald-400 uppercase tracking-tight">Available</span>
               </div>
-              <span className="text-2xl font-display font-bold text-emerald-400">12</span>
+              <span className="text-2xl font-display font-bold text-emerald-400">{(stats?.totalBeds || 0) - (stats?.occupiedBeds || 0)}</span>
             </div>
             <div className="flex items-center justify-between p-6 bg-blue-500/10 rounded-3xl border border-blue-500/20 group hover:bg-blue-500/20 transition-all cursor-pointer">
               <div className="flex items-center gap-4">
                 <div className="w-3 h-3 rounded-full bg-blue-500" />
                 <span className="text-sm font-bold text-blue-400 uppercase tracking-tight">Occupied</span>
               </div>
-              <span className="text-2xl font-display font-bold text-blue-400">18</span>
+              <span className="text-2xl font-display font-bold text-blue-400">{stats?.occupiedBeds || 0}</span>
             </div>
             <div className="flex items-center justify-between p-6 bg-orange-500/10 rounded-3xl border border-orange-500/20 group hover:bg-orange-500/20 transition-all cursor-pointer">
               <div className="flex items-center gap-4">
                 <div className="w-3 h-3 rounded-full bg-orange-500" />
                 <span className="text-sm font-bold text-orange-400 uppercase tracking-tight">Maintenance</span>
               </div>
-              <span className="text-2xl font-display font-bold text-orange-400">2</span>
+              <span className="text-2xl font-display font-bold text-orange-400">{stats?.maintenanceBeds || 0}</span>
             </div>
           </div>
           <Link to="/wards" className="mt-10 w-full py-4 bg-white text-gray-900 rounded-2xl font-bold text-sm flex items-center justify-center gap-3 hover:bg-emerald-600 hover:text-white transition-all shadow-xl shadow-black/20">

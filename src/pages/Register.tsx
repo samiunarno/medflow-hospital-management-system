@@ -319,7 +319,7 @@ export default function Register() {
                         >
                           <option value="" className="bg-[#050505]">SELECT DEPT</option>
                           {departments.map(dept => (
-                            <option key={dept.id} value={dept.id} className="bg-[#050505]">{dept.name.toUpperCase()}</option>
+                            <option key={dept._id} value={dept._id} className="bg-[#050505]">{dept.name.toUpperCase()}</option>
                           ))}
                         </select>
                       </div>
@@ -355,7 +355,7 @@ export default function Register() {
                         >
                           <option value="" className="bg-[#050505]">SELECT DEPT</option>
                           {departments.map(dept => (
-                            <option key={dept.id} value={dept.id} className="bg-[#050505]">{dept.name.toUpperCase()}</option>
+                            <option key={dept._id} value={dept._id} className="bg-[#050505]">{dept.name.toUpperCase()}</option>
                           ))}
                         </select>
                       </div>

@@ -28,14 +28,4 @@ router.post('/request-account-action', authenticate, requestAccountAction);
 router.put('/profile', authenticate, updateProfile);
 router.post('/rate-doctor', authenticate, rateDoctor);
 
-// Admin Routes
-router.get('/admin/pending-users', authenticate, authorize(['Admin']), getPendingUsers);
-router.post('/admin/approve-user/:id', authenticate, authorize(['Admin']), approveUser);
-router.get('/admin/users', authenticate, authorize(['Admin']), getAllUsers);
-router.post('/admin/users', authenticate, authorize(['Admin']), createUser);
-router.put('/admin/users/:id', authenticate, authorize(['Admin']), updateUser);
-router.delete('/admin/users/:id', authenticate, authorize(['Admin']), deleteUser);
-router.post('/admin/handle-account-request/:id', authenticate, authorize(['Admin']), handleAccountRequest);
-router.post('/admin/ban-user/:id', authenticate, authorize(['Admin']), banUser);
-
 export default router;
